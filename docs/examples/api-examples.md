@@ -28,7 +28,7 @@ const { theme, page, frontmatter } = useData()
 ```
 
 <script setup>
-import { useData } from 'vitepress'
+import { useData } from 'vitepress';
 
 const { site, theme, page, frontmatter } = useData()
 </script>
@@ -52,7 +52,7 @@ const { site, theme, page, frontmatter } = useData()
 Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
 
 
-```angular2html
+```text
 Clone
 ├─ docs
 ├─ public
