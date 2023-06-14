@@ -29,6 +29,7 @@ import type { Ref } from "vue";
 import { computed, inject, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDebounce } from "@/utils";
+import { on, off } from "@/utils/domUtils";
 
 const gapValue = 64 * 2;
 const PARENT_PROVIDE = "parentProvide";
@@ -42,15 +43,17 @@ let isOnDrag = ref<boolean>(false); // 是否在拖拽
 let onDragClientY = ref<number>(0); // 拖拽时鼠标位置
 
 // 记录滚动条位置
-const positions = reactive({
-  home: { scrollTop: 0 },
+const positions = reactive<{
+  [key: string]: { scrollTop: number };
+}>({
+  home: { scrollTop: 0 }
 });
 
 // 滚动条样式
 const thumbStyle = computed(() => {
   return {
     transform: `translateY(${top.value}px)`,
-    height: `${thumbHeight.value}px`,
+    height: `${thumbHeight.value}px`
   };
 });
 
@@ -98,19 +101,16 @@ const handleDragStart = (e: PointerEvent) => {
   onDragClientY.value = e.clientY;
   isOnDrag.value = true;
   emit("useSelect");
-  document.addEventListener("mousemove", handleDragMove);
-  document.addEventListener("mouseup", handleDragEnd);
+  on(document, "mousemove", handleDragMove);
+  on(document, "mouseup", handleDragEnd);
 };
-const handleDragMove = (e: PointerEvent) => {
+const handleDragMove = (e: MouseEvent) => {
   if (!isOnDrag.value) return;
   const clientHeight = main.value.clientHeight - gapValue;
   const scrollHeight = main.value.scrollHeight - gapValue;
   const clientY = e.clientY;
   const scrollTop = main.value.scrollTop;
-  const offset = ~~(
-    ((clientY - onDragClientY.value) / clientHeight) *
-    scrollHeight
-  );
+  const offset = ~~(((clientY - onDragClientY.value) / clientHeight) * scrollHeight);
   top.value = ~~((scrollTop / scrollHeight) * clientHeight);
   main.value.scrollBy(0, offset);
   onDragClientY.value = clientY;
@@ -118,8 +118,8 @@ const handleDragMove = (e: PointerEvent) => {
 const handleDragEnd = () => {
   isOnDrag.value = false;
   emit("useSelect");
-  document.removeEventListener("mousemove", handleDragMove);
-  document.removeEventListener("mouseup", handleDragEnd);
+  off(document, "mousemove", handleDragMove);
+  off(document, "mouseup", handleDragEnd);
 };
 
 // 点击滚动条
@@ -141,14 +141,15 @@ const setScrollBarHideTimeout = useDebounce(() => {
 
 const setScrollPosition = useDebounce(() => {
   if (route.meta.savePosition) {
-    positions[route.name] = {
-      scrollTop: main.value.scrollTop,
+    console.log(route.name);
+    positions[route.name as string] = {
+      scrollTop: main.value.scrollTop
     };
   }
 }, 1000);
 defineExpose({
   handleScroll,
-  setScrollPosition,
+  setScrollPosition
 });
 
 const emit = defineEmits(["useSelect"]);

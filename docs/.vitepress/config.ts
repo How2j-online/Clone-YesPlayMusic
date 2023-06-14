@@ -15,6 +15,7 @@ export default defineConfig({
       { text: "docs", link: "/docs/index" }
     ],
 
+    outline: "deep",
     sidebar: {
       "/examples/": [
         {
@@ -23,6 +24,12 @@ export default defineConfig({
             { text: "Markdown Examples", link: "/examples/markdown-examples" },
             { text: "Runtime API Examples", link: "/examples/api-examples" }
           ]
+        }
+      ],
+      "/docs/": [
+        {
+          text: "Docs",
+          items: [{ text: "Getting Started", link: "/docs/project-construction" }]
         }
       ]
     },

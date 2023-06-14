@@ -37,12 +37,14 @@
             </div>
           </div>
         </div>
+        <!--suppress VueUnrecognizedDirective -->
         <img
+          src=""
           alt="avatar"
           class="avatar"
-          src="https://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60"
+          v-img-lazy
+          lazy="https://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60"
           @click="showUserProfileMenu"
-          loading="lazy"
         />
       </div>
     </nav>
@@ -98,7 +100,7 @@ const doSearch = () => {
     params: { keywords: keywords.value }
   });
 };
-const showUserProfileMenu = e => {
+const showUserProfileMenu = (e: PointerEvent) => {
   userProfileMenu.value?.openMenu(e);
 };
 const toSettings = () => {

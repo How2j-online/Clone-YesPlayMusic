@@ -1,25 +1,46 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
-import { getByAppleMusic, getRecommendPlaylist } from "@/service/home";
+import { onMounted, reactive } from "vue";
+import { getAlbumNewest, getArtists, getByAppleMusic, getRecommendPlaylist, getTopList } from "@/service/home";
 import CoverRow from "@/components/CoverRow.vue";
 import { useLocale } from "@/locales/useLocal";
 import DailyTracksCard from "@/components/DailyTracksCard.vue";
 import FMCard from "@/components/FMCard.vue";
+
 defineOptions({
   name: "Home"
 });
+
+// 国际化
 const { t } = useLocale();
+// 数据
 const listData = reactive({
   byAppleMusic: [],
   recommendArtists: [],
-  newReleasesAlbum: []
+  recommendTracks: [],
+  newReleasesAlbum: [],
+  topList: []
 });
+
 const loadData = () => {
+  // apple music
   getByAppleMusic().then(res => {
     listData.byAppleMusic = res.list;
   });
+  // 推荐歌单
   getRecommendPlaylist().then(res => {
-    listData.recommendArtists = res.result;
+    listData.recommendTracks = res.result;
+  });
+  // 推荐歌手
+  getArtists().then(res => {
+    listData.recommendArtists = res.artists.slice(0, 6);
+  });
+  // 新专速递
+  getAlbumNewest().then(res => {
+    listData.newReleasesAlbum = res.albums;
+  });
+  // 排行榜
+  getTopList().then(res => {
+    listData.topList = res.list.slice(0, 5);
   });
 };
 
@@ -33,12 +54,7 @@ onMounted(() => {
     <!--by Apple Music-->
     <div class="index-row first-row">
       <h1 class="title">by Apple Music</h1>
-      <CoverRow
-        :type="'playlist'"
-        :items="listData.byAppleMusic"
-        sub-text="appleMusic"
-        :image-size="1024"
-      />
+      <CoverRow :type="'playlist'" :items="listData.byAppleMusic" sub-text="appleMusic" :image-size="1024" />
     </div>
     <!--recommend playlist-->
     <div class="index-row">
@@ -46,7 +62,7 @@ onMounted(() => {
         {{ t("home.recommendPlaylist") }}
         <router-link to="/explore?category=推荐歌单">{{ t("home.seeMore") }}</router-link>
       </h1>
-      <CoverRow :type="'playlist'" :items="listData.recommendArtists" sub-text="copywriter" />
+      <CoverRow :type="'playlist'" :items="listData.recommendTracks" sub-text="copywriter" />
     </div>
     <!--for you-->
     <div class="index-row">
@@ -55,6 +71,27 @@ onMounted(() => {
         <DailyTracksCard />
         <FMCard />
       </div>
+    </div>
+    <!--推荐艺人-->
+    <div class="index-row">
+      <h1 class="title">{{ t("home.recommendArtist") }}</h1>
+      <CoverRow type="artist" :column-number="6" :items="listData.recommendArtists" />
+    </div>
+    <!--新专速递-->
+    <div class="index-row">
+      <h1 class="title">
+        {{ t("home.newAlbum") }}
+        <router-link to="/new-album">{{ t("home.seeMore") }}</router-link>
+      </h1>
+      <CoverRow type="album" :items="listData.newReleasesAlbum" sub-text="artist" />
+    </div>
+    <!--排行榜-->
+    <div class="index-row">
+      <h1 class="title">
+        {{ t("home.charts") }}
+        <router-link to="/explore?category=排行榜">{{ t("home.seeMore") }}</router-link>
+      </h1>
+      <CoverRow type="playlist" :items="listData.topList" sub-text="updateFrequency" :image-size="1024" />
     </div>
   </div>
 </template>

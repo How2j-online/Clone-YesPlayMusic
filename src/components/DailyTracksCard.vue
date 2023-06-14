@@ -1,6 +1,7 @@
 <template>
   <div class="daily-recommend-card" @click="goToDailyTracks">
-    <img :src="coverUrl" loading="lazy" alt="image" />
+    <!--suppress VueUnrecognizedDirective, HtmlUnknownAttribute -->
+    <img src="" v-img-lazy :lazy="coverUrl" alt="image" />
     <div class="container">
       <div class="title-box">
         <div class="title">

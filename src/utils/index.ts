@@ -3,8 +3,8 @@ import type { Ref } from "vue";
 import { isArray } from "lodash-es";
 import { cloneDeep, mergeWith } from "lodash-es";
 
-type FunctionI = () => void;
-export const useDebounce = (func: FunctionI, delay: number): FunctionI => {
+// 防抖
+export const useDebounce = (func: Fn, delay: number): Fn => {
   const timer: Ref<ReturnType<typeof setTimeout> | null> = ref(null);
   return () => {
     if (timer.value) clearTimeout(timer.value);
@@ -14,12 +14,12 @@ export const useDebounce = (func: FunctionI, delay: number): FunctionI => {
   };
 };
 
-export function isFunction(val: unknown): val is FunctionI {
+export function isFunction(val: unknown): val is Fn {
   return typeof val === "function";
 }
 
 // 用于判断是否是 对象类型或者函数类型
-export const isObject = (value: object | FunctionI | null) => {
+export const isObject = (value: object | Fn | null) => {
   const valueType = typeof value;
   return (valueType !== null && typeof value === "object") || typeof value === "function";
 };

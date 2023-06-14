@@ -82,7 +82,8 @@ const shadowStyles = computed(() => {
         </button>
       </div>
 
-      <img alt="image" :src="imageUrl" :style="imageStyles" loading="lazy" />
+      <!--suppress HtmlUnknownAttribute, VueUnrecognizedDirective -->
+      <img alt="image" src="" v-img-lazy :lazy="imageUrl" :style="imageStyles" />
 
       <transition v-if="coverHover || alwaysShowShadow" name="fade">
         <div v-show="focus || alwaysShowShadow" class="shadow" :style="shadowStyles"></div>

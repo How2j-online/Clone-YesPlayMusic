@@ -28,12 +28,14 @@ const props = withDefaults(
     subTextFontSize: "16px"
   }
 );
+// 样式
 const rowStyle = computed(() => {
   return {
     "grid-template-columns": `repeat(${props.columnNumber}, 1fr)`,
     "grid-gap": props.gap
   };
 });
+// 是否显示播放量
 const getImageUrl = (item: PlayerItem) => {
   if (item.img1v1Url) {
     const img1v1ID = item.img1v1Url.split("/");
@@ -46,16 +48,19 @@ const getImageUrl = (item: PlayerItem) => {
   let img = item.img1v1Url || item.picUrl || item.coverImgUrl;
   return `${img?.replace(/http:\/\//, "https://")}?param=512y512`;
 };
+// 是否是隐私
 const isPrivacy = (item: PlayerItem) => {
   return props.type === "playlist" && item.privacy === 10;
 };
+// 是否是独家
 const isExplicit = (item: PlayerItem) => {
   return props.type === "album" && item.mark === 1056768;
 };
+// 获取标题
 const getTitleLink = (item: PlayerItem) => {
   return `/${props.type}/${item.id}`;
 };
-
+// 获取子标题
 const getSubText = (item: PlayerItem) => {
   if (props.subText === "copywriter") return item.copywriter;
   if (props.subText === "description") return item.description;
@@ -63,10 +68,8 @@ const getSubText = (item: PlayerItem) => {
   if (props.subText === "creator") return "by " + item.creator.nickname;
   if (props.subText === "releaseYear") return new Date(item.publishTime).getFullYear();
   if (props.subText === "artist") {
-    if (item.artist !== undefined)
-      return `<a href="/#/artist/${item.artist.id}">${item.artist.name}</a>`;
-    if (item.artists !== undefined)
-      return `<a href="/#/artist/${item.artists[0].id}">${item.artists[0].name}</a>`;
+    if (item.artist !== undefined) return `<a href="/#/artist/${item.artist.id}">${item.artist.name}</a>`;
+    if (item.artists !== undefined) return `<a href="/#/artist/${item.artists[0].id}">${item.artists[0].name}</a>`;
   }
   if (props.subText === "albumType+releaseYear") {
     let albumType = item.type;
@@ -85,24 +88,17 @@ const getSubText = (item: PlayerItem) => {
 
 <template>
   <div class="cover-row" :style="rowStyle">
-    <div class="item" v-for="item in items" :key="item.id">
-      <Cover
-        :type="type"
-        :image-url="getImageUrl(item)"
-        :id="item.id"
-        :play-button-size="type === 'artist' ? 26 : playButtonSize"
-      />
+    <div class="item" v-for="item in items" :key="item.id" :class="{ artist: type === 'artist' }">
+      <!--图片-->
+      <Cover :type="type" :image-url="getImageUrl(item)" :id="item.id" :play-button-size="type === 'artist' ? 26 : playButtonSize" />
+      <!--文字-->
       <div class="text">
         <div v-if="showPlayCount" class="info">
-          <span class="play-count"
-            ><svg-icon class="svg-icon" name="play" />{{ formatPlayCount(item.playCount) }}
-          </span>
+          <span class="play-count"><svg-icon class="svg-icon" name="play" />{{ formatPlayCount(item.playCount) }} </span>
         </div>
         <div class="title" :style="{ fontSize: subTextFontSize }">
           <span v-if="isExplicit(item)" class="explicit-symbol"><ExplicitSymbol /></span>
-          <span v-if="isPrivacy(item)" class="lock-icon">
-            <svg-icon class="svg-icon" name="lock"
-          /></span>
+          <span v-if="isPrivacy(item)" class="lock-icon"> <svg-icon class="svg-icon" name="lock" /></span>
           <router-link :to="getTitleLink(item)">{{ item.name }}</router-link>
         </div>
         <div v-if="type !== 'artist' && subText !== 'none'" class="info">

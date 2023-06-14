@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import PARENT_PROVIDE from "@/App.vue";
-
 defineOptions({
   name: "FMCard"
 });
@@ -25,8 +23,7 @@ const resizeImage = (imgUrl: string, size = 512) => {
   }
   return `${httpsImgUrl}?param=${size}y${size}`;
 };
-const nextTrackCover =
-  "https://p1.music.126.net/e3OHl1DchMHo8rr8XUOlrA==/109951166503049404.jpg?param=512y512";
+const nextTrackCover = "https://p1.music.126.net/e3OHl1DchMHo8rr8XUOlrA==/109951166503049404.jpg?param=512y512";
 const track = {
   name: "name",
   artists: [
@@ -63,14 +60,10 @@ onMounted(() => {
 
 <template>
   <div class="fm" :style="{ background }" data-theme="dark">
-    <img :src="nextTrackCover" style="display: none" loading="lazy" alt="image" />
-    <img
-      class="cover"
-      :src="track.album && resizeImage(track.album.picUrl, 512)"
-      loading="lazy"
-      alt="image"
-      @click="goToAlbum"
-    />
+    <!--suppress HtmlUnknownAttribute, VueUnrecognizedDirective -->
+    <img src="" v-img-lazy :lazy="nextTrackCover" style="display: none" alt="image" />
+    <!--suppress VueUnrecognizedDirective, HtmlUnknownAttribute -->
+    <img class="cover" src="" :lazy="track.album && resizeImage(track.album.picUrl, 512)" v-img-lazy alt="image" @click="goToAlbum" />
     <div class="right-part">
       <div class="info">
         <div class="title">{{ track.name }}</div>
@@ -81,11 +74,7 @@ onMounted(() => {
           <button-icon title="不喜欢" @click.native="moveToFMTrash">
             <svg-icon id="thumbs-down" class="svg-icon" name="thumbs-down" />
           </button-icon>
-          <button-icon
-            :title="t(isPlaying ? 'player.pause' : 'player.play')"
-            class="play"
-            @click.native="play"
-          >
+          <button-icon :title="t(isPlaying ? 'player.pause' : 'player.play')" class="play" @click.native="play">
             <svg-icon :name="isPlaying ? 'pause' : 'play'" class="svg-icon" />
           </button-icon>
           <button-icon :title="t('player.next')" @click.native="next">

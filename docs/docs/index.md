@@ -22,6 +22,10 @@ Clone
 │    ├─ store  // vuex文件夹
 │    ├─ utils  // 工具文件夹
 │    └─ views  // 页面文件夹
+
+
+├─ .commitlintrc.json
+├─ .cz-config.json
 └─ types  // 类型文件夹
 ```
 

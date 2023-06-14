@@ -6,23 +6,23 @@
     },
     {
       "value": ":bug: fix",
-      "name": "🐛  fix: 修复"
+      "name": "🐛 fix: 修复"
     },
     {
       "value": ":memo: docs",
-      "name": "📝  docs: 文档变更"
+      "name": "📝 docs: 文档变更"
     },
     {
       "value": ":lipstick: style",
-      "name": "💄  style: 代码格式(不影响代码运行的变动)"
+      "name": "💄 style: 代码格式(不影响代码运行的变动)"
     },
     {
       "value": ":recycle: refactor",
-      "name": "♻️  refactor: 重构 (既不增加feature, 也不是修复bug)"
+      "name": "♻️ refactor: 重构 (既不增加feature, 也不是修复bug)"
     },
     {
       "value": ":zap: perf",
-      "name": "⚡️  perf: 性能优化"
+      "name": "⚡️ perf: 性能优化"
     },
     {
       "value": ":white_check_mark: test",
@@ -30,7 +30,7 @@
     },
     {
       "value": ":wrench: chore",
-      "name": "🔧  chore: 构建过程或辅助工具的变动"
+      "name": "🔧 chore: 构建过程或辅助工具的变动"
     },
     {
       "value": ":rewind: revert",
@@ -38,11 +38,11 @@
     },
     {
       "value": ":rocket: build",
-      "name": "🚀  build: 打包"
+      "name": "🚀 build: 打包"
     },
     {
       "value": ":construction_worker: develop",
-      "name": " 💪  develop: 开发中的提交"
+      "name": "💪 develop: 开发中的提交"
     }
 
   ],

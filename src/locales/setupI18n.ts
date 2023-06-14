@@ -15,6 +15,7 @@ export const createI18nOptions = async (): Promise<I18nOptions> => {
     legacy: false,
     sync: true, // 如果在组件中使用了 Composition API，需要将 sync 设置为 true
     fallbackLocale: "en", // 当找不到对应语言的时候，默认显示英文
+    globalInjection: false,
     messages: {
       [locale]: message
     }
