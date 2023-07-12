@@ -31,12 +31,12 @@ const defaultCovers = [
   "https://p2.music.126.net/QxJA2mr4hhb9DZyucIOIQw==/109951165422200291.jpg",
   "https://p1.music.126.net/AhYP9TET8l-VSGOpWAKZXw==/109951165134386387.jpg"
 ];
-const store = usePlayerStore();
 const useAnimation = ref<boolean>(false);
+const recommendTracks = ref([]);
 // 加载每日推荐歌曲数据
 const loadDailyTracks = () => {
   getDailyRecommendTracks().then(res => {
-    store.updateDailyTracks(res.data);
+    recommendTracks.value = res.data.dailySongs;
   });
 };
 
@@ -52,12 +52,12 @@ const playDailyTracks = () => {
 
 // 获取封面图片
 const coverUrl = computed(() => {
-  return `${store.dailyTracks[0]?.al.picUrl || sample(defaultCovers)}?param=1024y1024`;
+  return `${recommendTracks.value[0]?.al.picUrl || sample(defaultCovers)}?param=1024y1024`;
 });
 
 onMounted(() => {
   // 如果每日推荐歌曲数据为空，则加载数据
-  if (store.dailyTracks.length === 0) loadDailyTracks();
+  if (recommendTracks.value.length === 0) loadDailyTracks();
 });
 </script>
 

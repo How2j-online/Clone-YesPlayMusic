@@ -1,9 +1,8 @@
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import "@/assets/css/nprogress.css";
-
+const nProgress = NProgress;
 const useNProgress = () => {
-  const nProgress = NProgress;
   nProgress.configure({ showSpinner: false, parent: "body" });
 
   const start = () => {
@@ -16,7 +15,7 @@ const useNProgress = () => {
 
   return {
     start,
-    done,
+    done
   };
 };
 

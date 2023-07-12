@@ -1,13 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <div
-        v-show="show"
-        id="scrollbar"
-        class="user-select-none"
-        :class="{ 'on-drag': isOnDrag }"
-        @click="handleClick"
-      >
+      <div v-show="show" id="scrollbar" class="user-select-none" :class="{ 'on-drag': isOnDrag }" @click="handleClick">
         <div
           id="thumbContainer"
           :class="{ active }"
@@ -162,7 +156,7 @@ const emit = defineEmits(["useSelect"]);
   top: 0;
   bottom: 0;
   width: 16px;
-  z-index: 1000;
+  z-index: var(--z-index-scoll);
 
   #thumbContainer {
     margin-top: 64px;

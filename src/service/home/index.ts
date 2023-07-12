@@ -1,5 +1,5 @@
 import { defHttp } from "@/utils/http";
-import { PlayerItem, RecommendItem } from "@/service/home/type";
+import { PlayerItem, RecommendPlayListItemType, RecommendTrackType } from "@/service/home/type";
 import { byAppleMusic, recommendPlayList, musicList, artists, albumNewest, topList } from "@/service/static/home";
 
 enum HomeApi {
@@ -33,7 +33,7 @@ export const getRecommendPlaylist = (params?: { limit: number }, isStatic: boole
   if (isStatic) {
     return Promise.resolve({ result: recommendPlayList });
   }
-  return defHttp.get<{ result: RecommendItem[] }>({
+  return defHttp.get<{ result: RecommendPlayListItemType[] }>({
     url: HomeApi.RecommendPlayList,
     params
   });
@@ -48,7 +48,7 @@ export const getDailyRecommendTracks = (isStatic: boolean = true) => {
   if (isStatic) {
     return Promise.resolve({ data: musicList });
   }
-  return defHttp.get({
+  return defHttp.get<{ data: RecommendTrackType }>({
     url: HomeApi.DailyRecommendTracks,
     params: {
       timestamp: new Date().getTime()

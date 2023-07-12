@@ -2,7 +2,7 @@
 
 ## add commitizen
 
-用于git commit message的规范化，使用commitizen工具，可以通过命令行的方式，生成符合格式的commit message。
+用于 git commit message 的规范化，使用 commitizen 工具，可以通过命令行的方式，生成符合格式的 commit message。
 
 #### 安装 commitizen cz-customizable
 
@@ -11,8 +11,7 @@ yarn add commitizen  cz-customizable -D
 ```
 
 [commitizen](http://commitizen.github.io/cz-cli/) 是一个撰写合格 Commit message 的工具，它会根据你的输入，生成符合格式的 Commit message。  
-[cz-customizable](https://github.com/leoforfree/cz-customizable) 是一个 commitizen 的插件，它可以自定义 commit message 的格式。  
-
+[cz-customizable](https://github.com/leoforfree/cz-customizable) 是一个 commitizen 的插件，它可以自定义 commit message 的格式。
 
 #### 配置 commitizen cz-customizable
 
@@ -65,7 +64,6 @@ yarn add commitizen  cz-customizable -D
       "value": ":construction_worker: develop",
       "name": "💪 develop: 开发中的提交"
     }
-
   ],
   "messages": {
     "type": "请选择提交的类型：",
@@ -77,27 +75,26 @@ yarn add commitizen  cz-customizable -D
   },
   "subjectLimit": 72
 }
-
 ```
 
 在 `package.json` 中添加如下代码：
 
 ```json
 {
-    "config": {
-        "commitizen": {
-          "path": "node_modules/cz-customizable"
-        },
-        "cz-customizable": {
-          "config": ".cz-config.json"
-        }
-      }
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": ".cz-config.json"
+    }
+  }
 }
- ```
- 
+```
+
 ## add commitlint
 
-[commitlint](https://commitlint.js.org/#/)用于效验git commit message 是否符合规范
+[commitlint](https://commitlint.js.org/#/)用于效验 git commit message 是否符合规范
 
 #### 安装 commitlint
 
@@ -105,7 +102,7 @@ yarn add commitizen  cz-customizable -D
 yarn add @commitlint/cli @commitlint/config-conventional -D
 ```
 
-使用[commitlint-config-cz](https://github.com/whizark/commitlint-config-cz)对自定义的git提交说明进行校验。
+使用[commitlint-config-cz](https://github.com/whizark/commitlint-config-cz)对自定义的 git 提交说明进行校验。
 
 ```bash
 yarn add commitlint-config-cz -D
@@ -117,41 +114,22 @@ yarn add commitlint-config-cz -D
 
 ```json
 {
-  "extends": [
-    "@commitlint/config-conventional",
-    "cz"
-  ],  
+  "extends": ["@commitlint/config-conventional", "cz"],
   "rules": {
-        "type-empty": [0, "never"],
-        "subject-empty": [0, "never"],
-        "type-enum": [
-          2,
-          "always",
-          [
-            "docs",
-            "chore",
-            "feat",
-            "fix",
-            "merge",
-            "improvement",
-            "perf",
-            "refactor",
-            "revert",
-            "style",
-            "test",
-            "ci",
-            "build",
-            "develop"
-          ]
-        ]
-      }
-
+    "type-empty": [0, "never"],
+    "subject-empty": [0, "never"],
+    "type-enum": [
+      2,
+      "always",
+      ["docs", "chore", "feat", "fix", "merge", "improvement", "perf", "refactor", "revert", "style", "test", "ci", "build", "develop"]
+    ]
+  }
 }
 ```
 
 ## add husky
 
-[husky](https://typicode.github.io/husky/)是一个Git hooks 工具,内置了许多钩子处理命令，我们在git commit的时候需要校验commit信息是否符合规范，所以我们需要在commit之前执行commitlint校验，husky可以帮助我们在git commit之前执行命令。
+[husky](https://typicode.github.io/husky/)是一个 Git hooks 工具,内置了许多钩子处理命令，我们在 git commit 的时候需要校验 commit 信息是否符合规范，所以我们需要在 commit 之前执行 commitlint 校验，husky 可以帮助我们在 git commit 之前执行命令。
 
 #### 安装 husky
 
@@ -169,11 +147,11 @@ yarn husky install
 
 ```json
 {
-    "husky": {
-        "hooks": {
-          "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-        }
-      }
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
 }
 ```
 
@@ -185,13 +163,13 @@ npx husky add .husky/commit-msg  'npx --no -- commitlint --edit ${1}'
 
 #### 测试
 
-查看最近一次提交的commit message是否符合规范
+查看最近一次提交的 commit message 是否符合规范
 
 ```bash
 npx commitlint --from HEAD~1 --to HEAD --verbose
 ```
 
-参考  
-* [commitlint](https://juejin.cn/post/6887391877801672711)\
-* [husky](https://juejin.cn/post/6974301879731748900)
+参考
 
+- [commitlint](https://juejin.cn/post/6887391877801672711)\
+- [husky](https://juejin.cn/post/6974301879731748900)

@@ -18,12 +18,15 @@ const { theme, page, frontmatter } = useData()
 ## Results
 
 ### Theme Data
+
 <pre>{{ theme }}</pre>
 
 ### Page Data
+
 <pre>{{ page }}</pre>
 
 ### Page Frontmatter
+
 <pre>{{ frontmatter }}</pre>
 ```
 
@@ -36,21 +39,24 @@ const { site, theme, page, frontmatter } = useData()
 ## Results
 
 ### Theme Data
+
 <pre>{{ theme }}</pre>
 
 ### Page Data
+
 <pre>{{ page }}</pre>
 
 ### Page Frontmatter
+
 <pre>{{ frontmatter }}</pre>
 
 ## More
+
 3. [搭建](https://juejin.cn/post/7223286759630127159)
    )[one](https://juejin.cn/post/7212597327579037756#heading-6)
 4. [git lf](https://stackoverflow.com/questions/170961/whats-the-strategy-for-handling-crlf-carriage-return-line-feed-with-git)
 
 Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
-
 
 ```text
 Clone
@@ -67,8 +73,8 @@ Clone
 │    ├─ assets
 │    │    ├─ css
 │    │    ├─ fonts
-│    │    └─ icons    
-│    │           
+│    │    └─ icons
+│    │
 │    ├─ components
 │    ├─ hooks
 │    ├─ locales

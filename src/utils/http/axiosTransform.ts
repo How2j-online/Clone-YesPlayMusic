@@ -1,10 +1,5 @@
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
-import type {
-  RequestOptions,
-  CustomInterceptorRequestConfig,
-  Result,
-  CustomAxiosError
-} from "@/utils/http/type";
+import type { RequestOptions, CustomInterceptorRequestConfig, Result, CustomAxiosError } from "@/utils/http/type";
 
 export interface CreateAxiosOptions extends AxiosRequestConfig {
   authenticationsScheme?: string;
@@ -21,10 +16,7 @@ export abstract class AxiosTransform {
   /**
    * @description: 处理响应数据
    */
-  transformResponseHook?: (
-    res: AxiosResponse<Result>,
-    options: RequestOptions
-  ) => Promise<any> | any;
+  transformResponseHook?: (res: AxiosResponse<Result>, options: RequestOptions) => Promise<any> | any;
 
   /**
    * @description: 请求失败处理
@@ -34,10 +26,7 @@ export abstract class AxiosTransform {
   /**
    * @description: 请求之前的拦截器
    */
-  requestInterceptors?: (
-    config: CustomInterceptorRequestConfig,
-    options: CreateAxiosOptions
-  ) => CustomInterceptorRequestConfig;
+  requestInterceptors?: (config: CustomInterceptorRequestConfig, options: CreateAxiosOptions) => CustomInterceptorRequestConfig;
 
   /**
    * @description: 请求之后的拦截器

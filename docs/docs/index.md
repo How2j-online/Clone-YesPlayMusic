@@ -14,7 +14,7 @@ Clone
 │    ├─ assets  // 资源文件夹
 │    │    ├─ css  // 样式文件夹
 │    │    ├─ fonts  // 字体文件夹
-│    │    └─ icons  // 图标文件夹    
+│    │    └─ icons  // 图标文件夹
 │    ├─ components   // 组件文件夹
 │    ├─ hooks  // 自定义hook文件夹
 │    ├─ locales  // 国际化文件夹
@@ -28,4 +28,3 @@ Clone
 ├─ .cz-config.json
 └─ types  // 类型文件夹
 ```
-

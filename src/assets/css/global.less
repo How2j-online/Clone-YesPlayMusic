@@ -1,4 +1,8 @@
 @import "font";
+:root {
+  --z-index-scoll: 10;
+  --z-index-play: 100;
+}
 
 :root {
   --color-body-bg: #ffffff;
@@ -13,7 +17,7 @@
   --html-overflow-y: overlay;
 }
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --color-body-bg: #222222;
   --color-text: #ffffff;
   --color-primary: #335eea;
@@ -27,10 +31,8 @@
 
 #app,
 input {
-  font-family: 'Barlow', ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei,
-    Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif,
-    microsoft uighur;
+  font-family: "Barlow", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei,
+    Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif, microsoft uighur;
 }
 body {
   background-color: var(--color-body-bg);
@@ -67,7 +69,7 @@ a {
   }
 }
 
-[data-electron='yes'] {
+[data-electron="yes"] {
   button,
   .navigation-links a,
   .playlist-info .description {
@@ -91,7 +93,7 @@ a {
   background: rgba(128, 128, 128, 0.38);
 }
 
-[data-theme='dark'] ::-webkit-scrollbar-thumb {
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
   background: var(--color-secondary-bg);
 }
 
@@ -99,11 +101,31 @@ a {
   user-select: none;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   margin: 0;
 }
 
-html, body, p, div, ul, li, main, nav, span, svg {
+html,
+body,
+p,
+div,
+ul,
+li,
+main,
+nav,
+span,
+svg {
   caret-color: transparent;
+}
+
+button .svg-icon {
+  color: var(--color-text);
+  height: 16px;
+  width: 16px;
 }

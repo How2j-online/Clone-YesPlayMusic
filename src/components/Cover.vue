@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import SvgIcon from "@/components/SvgIcon.vue";
+import { useRouter } from "vue-router";
 
 defineOptions({
   name: "Cover"
@@ -37,6 +38,7 @@ const props = withDefaults(
     radius: 12
   }
 );
+const router = useRouter();
 
 const focus = ref(false);
 
@@ -66,17 +68,25 @@ const shadowStyles = computed(() => {
   if (props.type === "artist") styles.borderRadius = "50%";
   return styles;
 });
+
+const play = () => {
+  console.log("play");
+};
+const goTo = () => {
+  router.push({ name: props.type, params: { id: props.id } });
+};
 </script>
 
 <template>
   <div
     class="cover"
+    @click="clickCoverToPlay ? play : goTo"
     :class="{ 'cover-hover': coverHover }"
     @mouseover="focus = true"
     @mouseleave="focus = false"
   >
     <div class="cover-container">
-      <div class="shade">
+      <div class="shade" @click.stop="goTo">
         <button v-show="focus" class="play-button" :style="playButtonStyles">
           <svg-icon class="svg-icon" name="play" />
         </button>

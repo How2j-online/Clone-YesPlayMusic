@@ -3,13 +3,13 @@ import { useLazy } from "@/hooks/useLazy";
 import type { Directive, DirectiveBinding } from "vue";
 
 const imgLazyLoad = (el: HTMLImageElement, loadType: "src" | "bc" = "src") => {
-  const defaultImg = "https://img.yzcdn.cn/vant/cat.jpeg";
+  const defaultImg = "/img/error/error_image.png";
   const loadImg = () => {
     el.src = el.getAttribute("lazy");
     el.onerror = () => {
       el.src = defaultImg;
+      el.onerror = null;
     };
-    el.removeAttribute("lazy");
   };
 
   // 加载元素
@@ -20,7 +20,6 @@ const imgLazyLoad = (el: HTMLImageElement, loadType: "src" | "bc" = "src") => {
         break;
       case "bc":
         el.style.backgroundImage = `url(${el.getAttribute("lazy")})`;
-        el.removeAttribute("lazy");
         break;
     }
   };

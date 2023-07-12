@@ -17,7 +17,7 @@ const svgStyle = reactive({
 });
 </script>
 <template>
-  <svg-icon name="explicit" :style="svgStyle"></svg-icon>
+  <svg-icon name="explicit" :style="svgStyle" class="svg-icon"></svg-icon>
 </template>
 
 <style lang="less" scoped></style>

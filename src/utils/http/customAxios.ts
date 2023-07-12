@@ -2,13 +2,7 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios, { AxiosError } from "axios";
 import { AxiosCanceler } from "@/utils/http/axiosCancel";
 import qs from "qs";
-import {
-  ContentTypeEnum,
-  CustomInterceptorRequestConfig,
-  RequestEnum,
-  RequestOptions,
-  Result
-} from "@/utils/http/type";
+import { ContentTypeEnum, CustomInterceptorRequestConfig, RequestEnum, RequestOptions, Result } from "@/utils/http/type";
 import { CreateAxiosOptions } from "@/utils/http/axiosTransform";
 import { deepClone, isFunction } from "@/utils";
 
@@ -26,12 +20,7 @@ export class CustomAxios {
   private setupInterceptors() {
     const transform = this.getTransform();
     if (!transform) return;
-    const {
-      requestInterceptors,
-      requestInterceptorsCatch,
-      responseInterceptors,
-      responseInterceptorsCatch
-    } = transform;
+    const { requestInterceptors, requestInterceptorsCatch, responseInterceptors, responseInterceptorsCatch } = transform;
     const axiosCanceler = new AxiosCanceler();
 
     // 对象上的拦截器

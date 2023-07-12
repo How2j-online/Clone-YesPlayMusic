@@ -14,13 +14,14 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": false,
+    "experimentalDecorators": true,
     "baseUrl": "./",
-    "typeRoots": ["node_modules/@types", "types"],
+    "typeRoots": ["node_modules/@types", "./types"],
     "paths": {
       "@/*": ["src/*"],
       "@types~/*": ["types/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist"],

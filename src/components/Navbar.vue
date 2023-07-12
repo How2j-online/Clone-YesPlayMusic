@@ -2,12 +2,8 @@
   <div class="nav-bar user-select-none">
     <nav>
       <div class="navigation-buttons">
-        <button-icon @click="handleGo('back')"
-          ><SvgIcon name="arrow-left" class="svg-icon" />
-        </button-icon>
-        <button-icon @click="handleGo('forward')"
-          ><SvgIcon name="arrow-right" class="svg-icon" />
-        </button-icon>
+        <button-icon @click="handleGo('back')"><SvgIcon name="arrow-left" class="svg-icon" /> </button-icon>
+        <button-icon @click="handleGo('forward')"><SvgIcon name="arrow-right" class="svg-icon" /> </button-icon>
       </div>
       <div class="navigation-links">
         <router-link to="/" :class="{ active: route.name === 'home' }">

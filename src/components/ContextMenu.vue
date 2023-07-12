@@ -35,15 +35,7 @@ defineExpose({
 
 <template>
   <div ref="contextMenu" class="context-menu">
-    <div
-      v-if="showMenu"
-      ref="menu"
-      class="menu"
-      tabindex="-1"
-      :style="{ top: topM, left: leftM }"
-      @blur="closeMenu"
-      @click="closeMenu"
-    >
+    <div v-if="showMenu" ref="menu" class="menu" tabindex="-1" :style="{ top: topM, left: leftM }" @blur="closeMenu" @click="closeMenu">
       <slot></slot>
     </div>
   </div>
@@ -92,13 +84,5 @@ defineExpose({
   .menu {
     background-color: var(--color-body-bg) !important;
   }
-}
-
-hr {
-  margin: 4px 10px;
-  background: rgba(128, 128, 128, 0.18);
-  height: 1px;
-  box-shadow: none;
-  border: none;
 }
 </style>

@@ -1,3 +1,5 @@
+import { TrackSongItem } from "@/service/common";
+
 export interface PlayerItem {
   id: number;
   img1v1Url: string;
@@ -18,7 +20,7 @@ export interface PlayerItem {
   artists: { id: string; name: string }[] | undefined;
 }
 
-export interface RecommendItem {
+export interface RecommendPlayListItemType {
   id: number;
   type: number;
   name: string;
@@ -30,4 +32,9 @@ export interface RecommendItem {
   trackCount: number;
   highQuality: boolean;
   alg: string;
+}
+
+export interface RecommendTrackType {
+  dailySongs: TrackSongItem[];
+  recommendReasons: { songId: number; reason: string }[];
 }

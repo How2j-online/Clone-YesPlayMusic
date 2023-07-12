@@ -1,13 +1,13 @@
 ## 提取图片主题色
 
-### 一、通过Canvas绘制图片
+### 一、通过 Canvas 绘制图片
 
 ```typescript
 const image = new Image();
-image.src = 'https://www.baidu.com/img/bd_logo1.png';
+image.src = "https://www.baidu.com/img/bd_logo1.png";
 image.onload = () => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0);
 };
 ```

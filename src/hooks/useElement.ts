@@ -5,7 +5,7 @@ export const useElementStyle = (el: Element) => {
   const getPadding = getComputedStyle(el)
     .padding.replace(/px/gi, "")
     .split(" ")
-    .map((item) => +item);
+    .map(item => +item);
   if (getPadding.length === 1) {
     padding.value = Array(4).fill(getPadding[0]);
   }

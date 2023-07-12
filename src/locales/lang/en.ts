@@ -1,24 +1,24 @@
 export default {
   common: {
     play: "PLAY",
-    songs: "Songs",
+    songs: "Songs"
   },
   nav: {
     home: "Home",
     explore: "Explore",
     library: "Library",
     search: "Search",
-    github: "GitHub Repo",
+    github: "GitHub Repo"
   },
   footer: {
-    settings: "Settings",
+    settings: "Settings"
   },
   home: {
     recommendPlaylist: "Recommended Playlists",
     recommendArtist: "Recommended Artists",
     newAlbum: "Latest Albums",
     seeMore: "SEE MORE",
-    charts: "Charts",
+    charts: "Charts"
   },
   library: {
     sLibrary: "'s Library",
@@ -34,16 +34,16 @@ export default {
     playHistory: {
       title: "Play History",
       week: "Latest Week",
-      all: "All Time",
+      all: "All Time"
     },
     userProfileMenu: {
       settings: "Settings",
-      logout: "Logout",
-    },
+      logout: "Logout"
+    }
   },
   explore: {
     explore: "Explore",
-    loadMore: "Load More",
+    loadMore: "Load More"
   },
   artist: {
     latestRelease: "Latest Releases",
@@ -59,16 +59,16 @@ export default {
     following: "Following",
     follow: "Follow",
     similarArtists: "Similar Artists",
-    artistDesc: "Artist Description",
+    artistDesc: "Artist Description"
   },
   album: {
     released: "Released",
-    albumDesc: "Album Description",
+    albumDesc: "Album Description"
   },
   playlist: {
     playlist: "Playlists",
     updatedAt: "Updated at",
-    search: "Search in playlist",
+    search: "Search in playlist"
   },
   login: {
     accessToAll: "Access to all data",
@@ -91,14 +91,14 @@ export default {
       Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
       YesPlayMusic is not the official website of NetEase Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Music API.`,
     noticeElectron: `Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
-      YesPlayMusic promises not to save any of your account information to the cloud.<br />`,
+      YesPlayMusic promises not to save any of your account information to the cloud.<br />`
   },
   mv: {
-    moreVideo: "More Videos",
+    moreVideo: "More Videos"
   },
   next: {
     nowPlaying: "Now Playing",
-    nextUp: "Next Up",
+    nextUp: "Next Up"
   },
   player: {
     like: "Like",
@@ -112,10 +112,10 @@ export default {
     play: "Play",
     pause: "Pause",
     mute: "Mute",
-    nextUp: "Next Up",
+    nextUp: "Next Up"
   },
   modal: {
-    close: "Close",
+    close: "Close"
   },
   search: {
     artist: "Artists",
@@ -124,7 +124,7 @@ export default {
     mv: "Music Videos",
     playlist: "Playlists",
     noResult: "No Results",
-    searchFor: "Search for",
+    searchFor: "Search for"
   },
   settings: {
     settings: "Settings",
@@ -135,18 +135,18 @@ export default {
       low: "Low",
       medium: "Medium",
       high: "High",
-      lossless: "Lossless",
+      lossless: "Lossless"
     },
     cacheLimit: {
       text: "Songs Cache limit",
-      none: "None",
+      none: "None"
     },
     lyricFontSize: {
       text: "Lyric Font Size",
       small: "Small",
       medium: "Medium",
       large: "Large (Default)",
-      xLarge: "X-Large",
+      xLarge: "X-Large"
     },
     deviceSelector: "Audio Output Device",
     permissionRequired: "Microphone Permission Required",
@@ -154,7 +154,7 @@ export default {
       text: "Appearance",
       auto: "Auto",
       light: "Light",
-      dark: "Dark",
+      dark: "Dark"
     },
     automaticallyCacheSongs: "Automatically cache songs",
     clearSongsCache: "Clear Songs Cache",
@@ -172,42 +172,41 @@ export default {
       text: "Show Lyrics Background",
       off: "Off",
       on: "On",
-      dynamic: "Dynamic (High GPU usage)",
+      dynamic: "Dynamic (High GPU usage)"
     },
     closeAppOption: {
       text: "Close App...",
       ask: "Ask",
       exit: "Exit",
-      minimizeToTray: "Minimize to tray",
+      minimizeToTray: "Minimize to tray"
     },
     unm: {
       enable: "Enable",
       audioSource: {
-        title: "Audio Sources",
+        title: "Audio Sources"
       },
       enableFlac: {
         title: "Enable FLAC Sources",
-        desc: "To take effect, it may be required to clear the cache after enabling this function.",
+        desc: "To take effect, it may be required to clear the cache after enabling this function."
       },
       searchMode: {
         title: "Audio Search Mode",
         fast: "Speed Priority",
-        order: "Order Priority",
+        order: "Order Priority"
       },
       cookie: {
         jooX: "Cookie for JooX use",
         qq: "Cookie for QQ use",
         desc1: "Click here for the configuration instruction. ",
-        desc2: "Leave empty to pick up the default value",
+        desc2: "Leave empty to pick up the default value"
       },
       ytDL: "The youtube-dl Executable File for YtDl",
       proxy: {
         title: "Proxy Server for UNM",
-        desc1:
-          "The proxy server to use for requesting services such as YouTube",
-        desc2: "Leave empty to pick up the default value",
-      },
-    },
+        desc1: "The proxy server to use for requesting services such as YouTube",
+        desc2: "Leave empty to pick up the default value"
+      }
+    }
   },
   contextMenu: {
     play: "Play",
@@ -223,7 +222,7 @@ export default {
     allPlaylists: "All Playlists",
     minePlaylists: "My Playlists",
     likedPlaylists: "Liked Playlists",
-    cardiacMode: "Cardiac Mode",
+    cardiacMode: "Cardiac Mode"
   },
   toast: {
     savedToPlaylist: "Saved to playlist",
@@ -232,6 +231,6 @@ export default {
     removedFromMyLikedSongs: "Removed from my Liked Songs",
     copied: "Copied",
     copyFailed: "Copy failed: ",
-    needToLogin: "Need to log into netEase account",
-  },
+    needToLogin: "Need to log into netEase account"
+  }
 };
