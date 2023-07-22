@@ -112,7 +112,8 @@ export default {
     play: "Play",
     pause: "Pause",
     mute: "Mute",
-    nextUp: "Next Up"
+    nextUp: "Next Up",
+    noRepeat: "No Repeat"
   },
   modal: {
     close: "Close"

@@ -1,4 +1,6 @@
 //  歌单详情
+import { TrackSongItem } from "@/service/common";
+
 export interface PlayListType {
   id: number;
   coverImgUrl: string;

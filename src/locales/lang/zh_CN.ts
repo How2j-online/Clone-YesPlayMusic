@@ -113,7 +113,8 @@ export default {
     play: "播放",
     pause: "暂停",
     mute: "静音",
-    nextUp: "播放列表"
+    nextUp: "播放列表",
+    noRepeat: "不循环"
   },
   modal: {
     close: "关闭"

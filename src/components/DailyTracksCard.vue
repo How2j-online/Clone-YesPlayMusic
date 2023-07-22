@@ -13,7 +13,7 @@
       </div>
     </div>
     <button class="play-button" @click.stop="playDailyTracks">
-      <svg-icon name="play" class="svg-icon" />
+      <svg-icon name="play" class="svg-icon" :data-theme="theme" />
     </button>
   </div>
 </template>
@@ -24,6 +24,12 @@ import { computed, onMounted, ref } from "vue";
 import { getDailyRecommendTracks } from "@/service/home";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { usePlayerStore } from "@/store/player";
+import { useSettingStore } from "@/store/setting";
+
+const settingStore = useSettingStore();
+const theme = computed(() => {
+  return !settingStore.theme ? "dark" : "light";
+});
 
 const defaultCovers = [
   "https://p1.music.126.net/WP8O0ixZNwpm0fG6zymivQ==/109951167957001651.jpg",

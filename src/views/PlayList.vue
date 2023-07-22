@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Cover from "@/components/Cover.vue";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { resizeImage } from "@/utils/format";
 import { useLocale } from "@/locales/useLocal";
 import { formatDate } from "@/utils/format";
@@ -12,12 +12,15 @@ import SvgIcon from "@/components/SvgIcon.vue";
 import { getPlaylistDetail } from "@/service/playlist";
 import { useRoute } from "vue-router";
 import { PlayListType, TacksT } from "@/service/playlist/type";
+import PlayerTool from "@/utils/player-tool";
 const route = useRoute();
 const { t } = useLocale();
 
 defineOptions({
   name: "PlayList"
 });
+const playerTool = new PlayerTool();
+const id = route.params.id as string;
 const show = ref(true);
 const showFullDescription = ref(false);
 const isUserOwnPlaylist = false;
@@ -166,7 +169,6 @@ const filteredTracks = computed(() => {
 });
 // 获取歌单详情数据
 onBeforeMount(() => {
-  const id = route.params.id as string;
   getPlaylistDetail(id).then(res => {
     playlist.value = res.playlist;
     tracks.value = res.playlist.tracks;
@@ -195,7 +197,9 @@ const openVideo = () => {
   console.log("openVideo");
 };
 const toggleFullDescription = () => {};
-const playPlaylistByID = () => {};
+const playPlaylistByID = () => {
+  playerTool.playTracksList(+id, "playlist");
+};
 const likePlaylist = (toast: boolean = true) => {};
 const searchInPlaylist = () => {};
 const editPlaylist = () => {};
@@ -217,6 +221,7 @@ const inputDebounce = () => {};
         type="playlist"
         :cover-hover="false"
         :play-button-size="18"
+        @contextmenu.prevent
         @click.right.native="openMenu"
       />
       <!--歌单信息 及按钮-->
@@ -285,7 +290,7 @@ const inputDebounce = () => {};
       <div class="subtitle">{{ playlist?.englishTitle }} · {{ playlist?.updateFrequency }}</div>
 
       <div class="buttons">
-        <ButtonTwoTone class="play-button" icon-class="play" color="grey" @click.native="playPlaylistByID()">
+        <ButtonTwoTone class="play-button" icon-class="play" color="grey" @click.native="playPlaylistByID">
           {{ t("common.play") }}
         </ButtonTwoTone>
         <ButtonTwoTone
@@ -299,7 +304,8 @@ const inputDebounce = () => {};
           @click.native="likePlaylist"
         >
         </ButtonTwoTone>
-        <ButtonTwoTone icon-class="more" :icon-button="true" :horizontal-padding="0" color="grey" @click.native="openMenu"> </ButtonTwoTone>
+        <ButtonTwoTone icon-class="more" :icon-button="true" :horizontal-padding="0" color="grey" @click.native="openMenu">
+        </ButtonTwoTone>
       </div>
     </div>
 
@@ -339,9 +345,14 @@ const inputDebounce = () => {};
       }}</ButtonTwoTone>
     </div>
 
-    <Modal :show="showFullDescription" :close="toggleFullDescription" :show-footer="false" :click-outside-hide="true" title="歌单介绍">{{
-      playlist.description
-    }}</Modal>
+    <Modal
+      :show="showFullDescription"
+      :close="toggleFullDescription"
+      :show-footer="false"
+      :click-outside-hide="true"
+      title="歌单介绍"
+      >{{ playlist.description }}</Modal
+    >
 
     <ContextMenu ref="playlistMenu">
       <!-- <div class="item">{{ t('contextMenu.addToQueue') }}</div> -->

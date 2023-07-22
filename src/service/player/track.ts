@@ -38,11 +38,11 @@ export const getTrackUrl = (id: number, isStatic: boolean = true) => {
  */
 export const getTrackDetail = (id: number, isStatic: boolean = true) => {
   if (isStatic) {
-    let songsIndex = 0;
-    if (id === 1478005597) {
-      songsIndex = 1;
-    }
-    return Promise.resolve(songs[songsIndex]);
+    const song = songs.find(item => item.id === id);
+    return Promise.resolve({
+      code: 200,
+      songs: [song]
+    });
   }
   return defHttp.get({
     url: PlayerApi.TrackDetail,

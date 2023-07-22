@@ -2,22 +2,22 @@
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import HSlider from "@/components/Slider/HSlider.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
-import { computed, onUpdated, reactive, watch } from "vue";
+import { computed, watch } from "vue";
 import { resizeImage } from "@/utils/format";
 import { useLocale } from "@/locales/useLocal";
 import { usePlayerStore } from "@/store/player";
 import { storeToRefs } from "pinia";
-import PlayerTool from "@/utils/player";
+import PlayerTool from "@/utils/player-tool";
+import { useSettingStore } from "@/store/setting";
 
 const playerTool = new PlayerTool();
 const { t } = useLocale();
-const settings = reactive({
-  nYanCatStyle: false, // 是否启用 nYan cat 模式 (歌词滚动条)
-  enableReversedMode: false // 是否启用反向模式 (歌词滚动条)
-});
 
 const playerStore = usePlayerStore();
-const { player, currentTrack } = storeToRefs(playerStore);
+const { playerToolInfo, currentTrack, playerPlaying } = storeToRefs(playerStore);
+
+const settingStore = useSettingStore();
+const { theme } = storeToRefs(settingStore);
 
 // 格式化音轨时间
 const formatTrackTime = (value: number) => {
@@ -26,14 +26,22 @@ const formatTrackTime = (value: number) => {
   let sec = (~~(value % 60)).toString().padStart(2, "0");
   return `${min}:${sec}`;
 };
-
-const audioSource = computed(() => {
-  return "";
+// 循环title
+const repeatTitle = computed(() => {
+  switch (playerToolInfo.value.repeatMode) {
+    case "off":
+      return t("player.noRepeat");
+    case "on":
+      return t("player.repeat");
+    case "one":
+      return t("player.repeatTrack");
+    case "shuffle":
+      return t("player.shuffle");
+  }
 });
-
 // 播放器音量
 const volume = computed(() => {
-  return player.value.volume;
+  return playerToolInfo.value.volume;
 });
 watch(volume, value => {
   playerTool.changeVolume(value);
@@ -43,6 +51,11 @@ watch(volume, value => {
 const toggleLyrics = () => {
   playerStore.changeShowLyrics();
 };
+
+const audioSource = computed(() => {
+  return "12312";
+});
+
 // 是否有播放列表
 const hasList = () => {};
 // 打开播放列表
@@ -55,10 +68,10 @@ const likeATrack = (id: number) => {
   console.log("likeATrack");
 };
 const playPrevTrack = () => {
-  console.log("playPrevTrack");
+  playerTool.playPrevTrack();
 };
 const playNextTrack = () => {
-  console.log("playNextTrack");
+  playerTool.playNextTrack();
 };
 
 const playOrPause = () => {
@@ -75,7 +88,7 @@ const switchShuffle = () => {
   console.log("switchShuffle");
 };
 const switchReversed = () => {
-  console.log("switchReversed");
+  playerTool.changeReversed();
 };
 const mute = () => {
   console.log("mute");
@@ -83,6 +96,7 @@ const mute = () => {
 const goToNextTracksPage = () => {
   console.log("goToNextTracksPage");
 };
+
 const goToAlbum = () => {
   console.log("goToAlbum");
 };
@@ -96,14 +110,14 @@ const handleSliderDrag = (value: number) => {
   <div class="player">
     <div class="progress-bar">
       <HSlider
-        v-model="player.progress"
+        v-model="playerToolInfo.progress"
         :dot-size="12"
         :drag-on-click="true"
         :duration="0"
         :interval="0.5"
         :height="6"
         :lazy="true"
-        :max="player.currentTrackDuration"
+        :max="playerToolInfo.currentTrackDuration"
         :min="0"
         :silent="true"
         @on-drag-end="handleSliderDrag"
@@ -129,11 +143,11 @@ const handleSliderDrag = (value: number) => {
           </div>
           <div class="like-button">
             <button-icon
-              :title="player.isCurrentTrackLiked ? t('player.unlike') : t('player.like')"
-              @click.native="likeATrack(player.currentTrack.id)"
+              :title="playerToolInfo.isCurrentTrackLiked ? t('player.unlike') : t('player.like')"
+              @click.native="likeATrack(currentTrack.id)"
             >
-              <svg-icon v-show="!player.isCurrentTrackLiked" class="svg-icon" name="heart"></svg-icon>
-              <svg-icon v-show="player.isCurrentTrackLiked" class="svg-icon" name="heart-solid"></svg-icon>
+              <svg-icon v-show="!playerToolInfo.isCurrentTrackLiked" class="svg-icon" name="heart"></svg-icon>
+              <svg-icon v-show="playerToolInfo.isCurrentTrackLiked" class="svg-icon" name="heart-solid"></svg-icon>
             </button-icon>
           </div>
         </div>
@@ -142,14 +156,14 @@ const handleSliderDrag = (value: number) => {
       <div class="middle-control-buttons">
         <div class="blank"></div>
         <div class="container" @click.stop>
-          <button-icon v-show="!player.isPersonalFM" :title="t('player.previous')" @click.native="playPrevTrack">
+          <button-icon v-show="!playerToolInfo.isPersonalFM" :title="t('player.previous')" @click.native="playPrevTrack">
             <svg-icon class="svg-icon" name="previous" />
           </button-icon>
-          <button-icon v-show="player.isPersonalFM" title="不喜欢" @click.native="moveToFMTrash">
+          <button-icon v-show="playerToolInfo.isPersonalFM" title="不喜欢" @click.native="moveToFMTrash">
             <svg-icon name="thumbs-down" class="svg-icon" />
           </button-icon>
-          <button-icon :title="t(player.playing ? 'player.pause' : 'player.play')" class="play" @click.native="playOrPause">
-            <svg-icon :name="player.playing ? 'pause' : 'play'" class="svg-icon" />
+          <button-icon :title="t(playerPlaying ? 'player.pause' : 'player.play')" class="play" @click.native="playOrPause">
+            <svg-icon :name="playerPlaying ? 'pause' : 'play'" class="svg-icon" />
           </button-icon>
           <button-icon :title="t('player.next')" @click.native="playNextTrack">
             <svg-icon name="next" class="svg-icon" />
@@ -160,38 +174,38 @@ const handleSliderDrag = (value: number) => {
       <div class="right-control-buttons">
         <div class="blank"></div>
         <div class="container" @click.stop>
+          <!--展开播发列表-->
           <button-icon
             :class="{
               active: $route.name === 'next',
-              disabled: player.isPersonalFM
+              disabled: playerToolInfo.isPersonalFM
             }"
             :title="t('player.nextUp')"
             @click.native="goToNextTracksPage"
           >
             <svg-icon name="list" class="svg-icon" />
           </button-icon>
+          <!--循环状态-->
           <button-icon
             :class="{
-              active: player.repeatMode !== 'off',
-              disabled: player.isPersonalFM
+              active: playerToolInfo.repeatMode !== 'off',
+              disabled: playerToolInfo.isPersonalFM
             }"
-            :title="player.repeatMode === 'one' ? t('player.repeatTrack') : t('player.repeat')"
+            :title="repeatTitle"
             @click.native="switchRepeatMode"
           >
-            <svg-icon v-show="player.repeatMode !== 'one'" name="repeat" class="svg-icon" />
-            <svg-icon v-show="player.repeatMode === 'one'" name="repeat-1" class="svg-icon" />
+            <svg-icon
+              v-show="playerToolInfo.repeatMode === 'on' || playerToolInfo.repeatMode === 'off'"
+              name="repeat"
+              class="svg-icon"
+            />
+            <svg-icon v-show="playerToolInfo.repeatMode === 'one'" name="repeat-1" class="svg-icon" />
+            <svg-icon v-show="playerToolInfo.repeatMode === 'shuffle'" name="shuffle" class="svg-icon" />
           </button-icon>
-          <!--播放-->
+          <!--倒序播放-->
           <button-icon
-            :class="{ active: player.shuffle, disabled: player.isPersonalFM }"
-            :title="t('player.shuffle')"
-            @click.native="switchShuffle"
-          >
-            <svg-icon name="shuffle" class="svg-icon" />
-          </button-icon>
-          <button-icon
-            v-if="settings.enableReversedMode"
-            :class="{ active: player.reversed, disabled: player.isPersonalFM }"
+            v-if="true"
+            :class="{ active: playerToolInfo.reversed, disabled: playerToolInfo.isPersonalFM }"
             :title="t('player.reversed')"
             @click.native="switchReversed"
           >
@@ -206,7 +220,7 @@ const handleSliderDrag = (value: number) => {
             </button-icon>
             <div class="volume-bar">
               <HSlider
-                v-model="player.volume"
+                v-model="playerToolInfo.volume"
                 :dot-size="12"
                 :drag-on-click="true"
                 :duration="0"

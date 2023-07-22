@@ -2,6 +2,8 @@
 import { computed, ref } from "vue";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { useRouter } from "vue-router";
+import { useSettingStore } from "@/store/setting";
+import PlayerTool from "@/utils/player-tool";
 
 defineOptions({
   name: "Cover"
@@ -12,6 +14,12 @@ interface Styles {
   borderRadius?: string;
   backgroundImage?: string;
 }
+
+const settingStore = useSettingStore();
+const theme = computed(() => {
+  return !settingStore.theme ? "dark" : "light";
+});
+const playerTool = new PlayerTool();
 
 const props = withDefaults(
   defineProps<{
@@ -70,7 +78,8 @@ const shadowStyles = computed(() => {
 });
 
 const play = () => {
-  console.log("play");
+  const type = props.type;
+  playerTool.playTracksList(props.id, type);
 };
 const goTo = () => {
   router.push({ name: props.type, params: { id: props.id } });
@@ -80,15 +89,15 @@ const goTo = () => {
 <template>
   <div
     class="cover"
-    @click="clickCoverToPlay ? play : goTo"
     :class="{ 'cover-hover': coverHover }"
     @mouseover="focus = true"
     @mouseleave="focus = false"
+    @click="clickCoverToPlay ? play() : goTo()"
   >
     <div class="cover-container">
-      <div class="shade" @click.stop="goTo">
-        <button v-show="focus" class="play-button" :style="playButtonStyles">
-          <svg-icon class="svg-icon" name="play" />
+      <div class="shade">
+        <button @click.stop="play" v-show="focus" class="play-button" :style="playButtonStyles">
+          <svg-icon class="svg-icon" name="play" :data-theme="theme" />
         </button>
       </div>
 

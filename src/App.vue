@@ -1,5 +1,5 @@
 <template>
-  <div id="appMain" :class="{ 'use-select-none': userSelectNone }">
+  <div id="appMain" :class="{ 'use-select-none': userSelectNone }" @contextmenu.prevent>
     <Scrollbar ref="scrollBar" class="user-select-none" @use-select="handleUseSelect" />
     <Navbar />
     <main ref="main" @scroll="handleMainScroll">
@@ -29,6 +29,7 @@ import Scrollbar from "@/components/Scrollbar.vue";
 import Lyrics from "@/views/Player/Lyrics.vue";
 import { usePlayerStore } from "@/store/player";
 import { storeToRefs } from "pinia";
+import TrackList from "@/components/TrackList/TrackList.vue";
 
 const route = useRoute();
 const userSelectNone = ref<boolean>(false);
@@ -40,18 +41,19 @@ provide(PARENT_PROVIDE, main);
 
 const showPlayer = ref<boolean>(true);
 const playerStore = usePlayerStore();
-const { showLyrics, player } = storeToRefs(playerStore);
+const { showLyrics, playerToolInfo } = storeToRefs(playerStore);
 const handleMainScroll = () => {
   scrollBar.value?.handleScroll();
 };
 
 const enablePlayer = computed(() => {
-  return player.value.enabled;
+  return playerToolInfo.value.enabled;
 });
 
 const handleUseSelect = () => {
   userSelectNone.value = !userSelectNone.value;
 };
+
 onActivated(() => {
   console.log(12312);
 });

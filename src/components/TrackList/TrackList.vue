@@ -13,7 +13,9 @@
       <hr v-show="type !== 'cloudDisk'" />
       <div class="item" @click="play">{{ t("contextMenu.play") }}</div>
       <div class="item" @click="addToQueue">{{ t("contextMenu.addToQueue") }}</div>
-      <div v-if="extraContextMenuItem.includes('removeTrackFromQueue')" class="item" @click="removeTrackFromQueue">从队列删除</div>
+      <div v-if="extraContextMenuItem.includes('removeTrackFromQueue')" class="item" @click="removeTrackFromQueue">
+        从队列删除
+      </div>
       <hr v-show="type !== 'cloudDisk'" />
       <div v-show="!isRightClickedTrackLiked && type !== 'cloudDisk'" class="item" @click="like">
         {{ t("contextMenu.saveToMyLikedSongs") }}
@@ -21,7 +23,9 @@
       <div v-show="isRightClickedTrackLiked && type !== 'cloudDisk'" class="item" @click="like">
         {{ t("contextMenu.removeFromMyLikedSongs") }}
       </div>
-      <div v-if="extraContextMenuItem.includes('removeTrackFromPlaylist')" class="item" @click="removeTrackFromPlaylist">从歌单中删除</div>
+      <div v-if="extraContextMenuItem.includes('removeTrackFromPlaylist')" class="item" @click="removeTrackFromPlaylist">
+        从歌单中删除
+      </div>
       <div v-show="type !== 'cloudDisk'" class="item" @click="addTrackToPlaylist">{{ t("contextMenu.addToPlaylist") }}</div>
       <div v-show="type !== 'cloudDisk'" class="item" @click="copyLink">{{ t("contextMenu.copyUrl") }}</div>
       <div v-if="extraContextMenuItem.includes('removeTrackFromCloudDisk')" class="item" @click="removeTrackFromCloudDisk">
@@ -61,7 +65,7 @@ defineOptions({
 
 const props = withDefaults(
   defineProps<{
-    tracks: TacksT | [];
+    tracks: TracksItemType[];
     type: string;
     id: number;
     dbClickTrackFunc?: string;
@@ -124,7 +128,6 @@ const playThisList = (id: number) => {
 };
 const playThisListDefault = (trackID: number) => {
   let track = props.tracks.find(t => t.id === trackID);
-  playerStore.updateCurrentTrack(track);
   console.log("track list playThisListDefault", trackID);
   // if (props.type === 'playlist') {
   //   this.player.playPlaylistByID(this.id, trackID);
