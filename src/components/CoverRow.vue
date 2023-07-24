@@ -90,7 +90,12 @@ const getSubText = (item: PlayerItem) => {
   <div class="cover-row" :style="rowStyle">
     <div class="item" v-for="item in items" :key="item.id" :class="{ artist: type === 'artist' }">
       <!--图片-->
-      <Cover :type="type" :image-url="getImageUrl(item)" :id="item.id" :play-button-size="type === 'artist' ? 26 : playButtonSize" />
+      <Cover
+        :type="type"
+        :image-url="getImageUrl(item)"
+        :id="item.id"
+        :play-button-size="type === 'artist' ? 26 : playButtonSize"
+      />
       <!--文字-->
       <div class="text">
         <div v-if="showPlayCount" class="info">

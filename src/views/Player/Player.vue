@@ -53,15 +53,18 @@ const toggleLyrics = () => {
 };
 
 const audioSource = computed(() => {
-  return "12312";
+  return currentTrack.value?.name;
 });
 
 // 是否有播放列表
-const hasList = () => {};
+const hasList = () => {
+  return false;
+};
 // 打开播放列表
 const goToList = () => {};
+
 const goToArtist = (id: number) => {
-  console.log(id);
+  console.log(id, 90);
 };
 const likeATrack = (id: number) => {
   console.log(id);
@@ -115,7 +118,7 @@ const handleSliderDrag = (value: number) => {
         :drag-on-click="true"
         :duration="0"
         :interval="0.5"
-        :height="6"
+        :height="3"
         :lazy="true"
         :max="playerToolInfo.currentTrackDuration"
         :min="0"

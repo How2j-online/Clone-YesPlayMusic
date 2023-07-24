@@ -7739,7 +7739,8 @@ export const topList = [
     highQuality: false,
     ordered: true,
     tags: [],
-    description: "云音乐歌曲赏音榜，以让用户鉴赏到更多潜力好歌为目的，以用户对歌曲互动热度为核心，按照综合数据排名取前100名，每日更新",
+    description:
+      "云音乐歌曲赏音榜，以让用户鉴赏到更多潜力好歌为目的，以用户对歌曲互动热度为核心，按照综合数据排名取前100名，每日更新",
     status: 0,
     name: "赏音榜",
     id: 7775163417,

@@ -247,7 +247,7 @@ const inputDebounce = () => {};
           {{ playlist.description }}
         </div>
         <div class="buttons">
-          <ButtonTwoTone icon-class="play" @click.native="playPlaylistByID()">
+          <ButtonTwoTone icon-class="play" @click.native="playPlaylistByID">
             {{ t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
@@ -335,7 +335,7 @@ const inputDebounce = () => {};
     <TrackList
       :id="playlist.id"
       :tracks="filteredTracks"
-      type="play-list"
+      type="playlist"
       :extra-context-menu-item="isUserOwnPlaylist ? ['removeTrackFromPlaylist'] : []"
     />
 

@@ -63,7 +63,14 @@ onMounted(() => {
     <!--suppress HtmlUnknownAttribute, VueUnrecognizedDirective -->
     <img src="" v-img-lazy :lazy="nextTrackCover" style="display: none" alt="image" />
     <!--suppress VueUnrecognizedDirective, HtmlUnknownAttribute -->
-    <img class="cover" src="" :lazy="track.album && resizeImage(track.album.picUrl, 512)" v-img-lazy alt="image" @click="goToAlbum" />
+    <img
+      class="cover"
+      src=""
+      :lazy="track.album && resizeImage(track.album.picUrl, 512)"
+      v-img-lazy
+      alt="image"
+      @click="goToAlbum"
+    />
     <div class="right-part">
       <div class="info">
         <div class="title">{{ track.name }}</div>

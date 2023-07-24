@@ -35,7 +35,15 @@ defineExpose({
 
 <template>
   <div ref="contextMenu" class="context-menu">
-    <div v-if="showMenu" ref="menu" class="menu" tabindex="-1" :style="{ top: topM, left: leftM }" @blur="closeMenu" @click="closeMenu">
+    <div
+      v-if="showMenu"
+      ref="menu"
+      class="menu"
+      tabindex="-1"
+      :style="{ top: topM, left: leftM }"
+      @blur="closeMenu"
+      @click="closeMenu"
+    >
       <slot></slot>
     </div>
   </div>

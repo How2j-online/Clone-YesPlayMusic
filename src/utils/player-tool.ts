@@ -30,7 +30,7 @@ class PlayerTool {
   _personalFMLoading: boolean = false; // 是否正在私人FM中加载新的track
   _personalFMNextLoading: boolean = false; // 是否正在缓存私人FM的下一首歌曲
   reversed: boolean = false; // 倒序播放
-  trackSwitchAutoPlay: boolean = false; // 切换歌曲时是否自动播放
+  trackSwitchAutoPlay: boolean = true; // 切换歌曲时是否自动播放
 
   playing: boolean = false; // 是否正在播放
   progress: number = 0; // 当前播放歌曲的进度
@@ -167,7 +167,12 @@ class PlayerTool {
 
   // 播放下一首歌曲
   _nextTrack(isFM: boolean) {
-    this.playNextTrack();
+    if (this.repeatMode === "one") {
+      // 单曲循环
+      this._replaceCurrentTrack(this.currentTrackID);
+    } else {
+      this.playNextTrack();
+    }
   }
 
   // 获取下一首歌曲
@@ -183,13 +188,20 @@ class PlayerTool {
         // 正序模式，当前歌曲是最后一首，则重新播放第一首
         return [this.tracks[0], 0];
       }
+    } else if (this.repeatMode === "shuffle") {
+      // 随机播放
+      return this._getShuffledNextTrack();
     }
 
     return [this.tracks[next], next];
   }
 
-  _prevTrack() {
-    this.playPrevTrack();
+  _getShuffledNextTrack() {
+    const shuffledTrackIndex = Math.floor(Math.random() * this.tracks.length);
+    do {
+      this._shuffledCurrent = Math.floor(Math.random() * this.tracks.length);
+    } while (this._shuffledCurrent === shuffledTrackIndex);
+    return [this.tracks[this._shuffledCurrent], this._shuffledCurrent];
   }
 
   // 获取上一首歌曲
@@ -205,6 +217,9 @@ class PlayerTool {
         // 正序模式，当前歌曲是第一首，则重新播放最后一首
         return [this.tracks[this.tracks.length - 1], this.tracks.length - 1];
       }
+    } else if (this.repeatMode === "shuffle") {
+      // 随机播放
+      return this._getShuffledNextTrack();
     }
     return [this.tracks[prev], prev];
   }
@@ -321,9 +336,9 @@ class PlayerTool {
       this._setPlaying(false);
       return;
     }
-
     this.currentTrackIndex = index;
     const isAutoPlay = this.repeatMode !== "off" && this.trackSwitchAutoPlay;
+
     this._replaceCurrentTrack(trackID, isAutoPlay);
   }
 
@@ -343,7 +358,7 @@ class PlayerTool {
       this._replaceCurrentTrack(tracksId[0]);
     } else {
       this.currentTrackIndex = tracksId.indexOf(autoPlayId);
-      this._replaceCurrentTrack(autoPlayId);
+      this._replaceCurrentTrack(autoPlayId, true);
     }
   }
 
@@ -353,6 +368,9 @@ class PlayerTool {
       this._getPlayListTracks(tracksSourceID, autoPlayId);
     }
   }
+
+  // 添加歌曲到播放列表
+  addTrackToTracksList(tracksSourceID: number, type: string, trackId: number) {}
 }
 
 export default PlayerTool;

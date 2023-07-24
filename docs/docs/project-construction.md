@@ -121,7 +121,22 @@ yarn add commitlint-config-cz -D
     "type-enum": [
       2,
       "always",
-      ["docs", "chore", "feat", "fix", "merge", "improvement", "perf", "refactor", "revert", "style", "test", "ci", "build", "develop"]
+      [
+        "docs",
+        "chore",
+        "feat",
+        "fix",
+        "merge",
+        "improvement",
+        "perf",
+        "refactor",
+        "revert",
+        "style",
+        "test",
+        "ci",
+        "build",
+        "develop"
+      ]
     ]
   }
 }

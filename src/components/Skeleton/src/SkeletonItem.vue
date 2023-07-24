@@ -58,7 +58,8 @@ withDefaults(
 
 .ske-rect.ske-ani,
 .ske-circle.ske-ani {
-  background: linear-gradient(100deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 60%) #ededed;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 60%)
+    #ededed;
   background-size: 200% 100%;
   background-position-x: 120%;
   animation: 1.4s skeleton-stripes ease-in-out infinite;

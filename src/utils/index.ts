@@ -41,7 +41,10 @@ export const deepClone = (originValue: SimpleKeyValueObject) => {
 };
 
 // 数组合并
-export const deepMerge = <T extends object | null | undefined, U extends object | null | undefined>(target: T, source: U): T & U => {
+export const deepMerge = <T extends object | null | undefined, U extends object | null | undefined>(
+  target: T,
+  source: U
+): T & U => {
   return mergeWith(cloneDeep(target), source, (objValue, srcValue) => {
     if (isObject(objValue) && isObject(srcValue)) {
       return mergeWith(cloneDeep(objValue), srcValue, (prevValue, nextValue) => {

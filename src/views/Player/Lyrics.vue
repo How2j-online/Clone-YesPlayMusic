@@ -139,7 +139,9 @@ onMounted(() => {
             <div class="top-part">
               <div class="track-info">
                 <div class="title" :title="currentTrack.name">
-                  <router-link v-if="hasList()" :to="`${getListPath()}`" @click.native="toggleLyrics">{{ currentTrack.name }} </router-link>
+                  <router-link v-if="hasList()" :to="`${getListPath()}`" @click.native="toggleLyrics"
+                    >{{ currentTrack.name }}
+                  </router-link>
                   <span v-else>
                     {{ currentTrack.name }}
                   </span>
@@ -153,7 +155,9 @@ onMounted(() => {
                   </span>
                   <span v-if="album.id !== 0">
                     -
-                    <router-link :to="`/album/${album.id}`" :title="album.name" @click.native="toggleLyrics">{{ album.name }} </router-link>
+                    <router-link :to="`/album/${album.id}`" :title="album.name" @click.native="toggleLyrics"
+                      >{{ album.name }}
+                    </router-link>
                   </span>
                 </div>
               </div>

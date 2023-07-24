@@ -55,9 +55,10 @@ import ContextMenu from "@/components/ContextMenu.vue";
 import { useLocale } from "@/locales/useLocal";
 import { resizeImage } from "@/utils/format";
 import { computed, CSSProperties, onBeforeMount, provide, ref } from "vue";
-import { TacksT, TracksItemType } from "@/service/playlist/type";
+import { TracksItemType } from "@/service/playlist/type";
 import { RCTProvideKey } from "@/global/key";
 import { usePlayerStore } from "@/store/player";
+import PlayerTool from "@/utils/player-tool";
 
 defineOptions({
   name: "TrackList"
@@ -97,6 +98,7 @@ const props = withDefaults(
 );
 
 const { t } = useLocale();
+const playerTool = new PlayerTool();
 const menuRef = ref<InstanceType<typeof ContextMenu> | null>(null);
 const playerStore = usePlayerStore();
 const listStyles = ref<CSSProperties>({}); // 列表样式
@@ -127,25 +129,21 @@ const playThisList = (id: number) => {
   }
 };
 const playThisListDefault = (trackID: number) => {
-  let track = props.tracks.find(t => t.id === trackID);
-  console.log("track list playThisListDefault", trackID);
-  // if (props.type === 'playlist') {
-  //   this.player.playPlaylistByID(this.id, trackID);
-  // } else if (this.type === 'album') {
-  //   this.player.playAlbumByID(this.id, trackID);
-  // } else if (this.type === 'tracklist') {
-  //   let trackIDs = this.tracks.map(t => t.id);
-  //   this.player.replacePlaylist(trackIDs, this.id, 'artist', trackID);
-  // }
+  playerTool.playTracksList(props.id, props.type, trackID);
 };
+
 const isRightClickedTrackLiked = computed(() => {
   // rightClickedTrack.value.id;
   return false;
 });
 // 播放音乐
-const play = () => {};
+const play = () => {
+  playerTool.playTracksList(props.id, props.type, rightClickedTrackComputed.value.id);
+};
 // 添加歌曲到播放列表
-const addToQueue = () => {};
+const addToQueue = () => {
+  playerTool.addTrackToTracksList(props.id, props.type, rightClickedTrackComputed.value.id);
+};
 // 从播放列表中删除
 const removeTrackFromQueue = () => {};
 // 添加到我喜欢的音乐
