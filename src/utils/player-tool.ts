@@ -63,7 +63,6 @@ class PlayerTool {
       this.volume = playerStore.playerToolInfo.volume;
       this.progress = playerStore.playerToolInfo.progress;
       this.repeatMode = playerStore.playerToolInfo.repeatMode;
-      this.shuffle = playerStore.playerToolInfo.shuffle;
       this.tracks = playerStore.currentTrackList;
       this.reversed = playerStore.playerToolInfo.reversed;
       this.currentTrack = playerStore.currentTrack;
@@ -97,7 +96,7 @@ class PlayerTool {
   get currentTrackDuration() {
     const trackDuration = this.currentTrack.dt || 1000;
     let duration = ~~(trackDuration / 1000);
-    return duration > 1 ? duration - 1 : duration;
+    return duration > 1 ? duration : duration;
   }
 
   // -----------------内部方法-----------------
@@ -296,6 +295,7 @@ class PlayerTool {
   // 修改播放进度
   changeProgress(progress: number) {
     this._howler?.seek(progress);
+    playerStore.updateProgress(progress);
   }
 
   // 切换播放模式

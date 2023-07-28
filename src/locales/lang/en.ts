@@ -113,7 +113,8 @@ export default {
     pause: "Pause",
     mute: "Mute",
     nextUp: "Next Up",
-    noRepeat: "No Repeat"
+    noRepeat: "No Repeat",
+    translationLyrics: "Show Translate Lyrics"
   },
   modal: {
     close: "Close"

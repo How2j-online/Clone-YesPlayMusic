@@ -254,12 +254,18 @@ const setPosition = async (newPosition: number) => {
   const steps = Math.round(newPosition / lengthPerStep);
   // 计算值
   let value = steps * lengthPerStep * ((props.max - props.min) / 100) + props.min;
+  console.log(value);
   value = Number.parseFloat(value.toFixed(precision.value));
   // 设置值
   dragValue.value = value;
   setTipToolValue(value);
   if (value !== props.modelValue) {
-    emits("update:modelValue", value);
+    if (initData.dragging && !props.lazy) {
+      emits("update:modelValue", value);
+    }
+    if (!initData.dragging) {
+      emits("update:modelValue", value);
+    }
   }
 
   if (!initData.dragging && props.modelValue !== initData.oldValue) {

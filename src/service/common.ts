@@ -139,3 +139,48 @@ export interface ChargeInfoList {
   chargeMessage: any;
   chargeType: number;
 }
+
+export interface LyricType {
+  sgc: boolean;
+  sfy: boolean;
+  qfy: boolean;
+  transUser: TransUser;
+  lyricUser: LyricUser;
+  lrc: Lrc;
+  klyric: KTLyric;
+  tlyric: KTLyric;
+  romalrc: Romalrc;
+}
+
+export interface TransUser {
+  id: number;
+  status: number;
+  demand: number;
+  userid: number;
+  nickname: string;
+  uptime: number;
+}
+
+export interface LyricUser {
+  id: number;
+  status: number;
+  demand: number;
+  userid: number;
+  nickname: string;
+  uptime: number;
+}
+
+export interface Lrc {
+  version: number;
+  lyric: string;
+}
+
+export interface KTLyric {
+  version: number;
+  lyric: string;
+}
+
+export interface Romalrc {
+  version: number;
+  lyric: string;
+}

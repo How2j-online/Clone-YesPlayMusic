@@ -114,7 +114,8 @@ export default {
     pause: "暂停",
     mute: "静音",
     nextUp: "播放列表",
-    noRepeat: "不循环"
+    noRepeat: "不循环",
+    translationLyrics: "显示歌词"
   },
   modal: {
     close: "关闭"

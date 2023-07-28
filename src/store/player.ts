@@ -9,7 +9,6 @@ interface PlayerT {
   volume: number;
   muted: boolean;
   currentTrackDuration?: number;
-  shuffle: boolean;
   reversed: boolean;
   isCurrentTrackLiked?: boolean;
   isPersonalFM?: boolean;
@@ -33,13 +32,18 @@ export const usePlayerStore = defineStore(
     });
     // 当前播放列表
     const currentTrackList = ref<number[]>([]);
-
+    // 当前播放歌曲的歌词
+    const currentTrackLyricsInfo = reactive<{
+      lyricLineIndex: number;
+    }>({
+      lyricLineIndex: -1
+    });
+    // 播放器工具信息
     const playerToolInfo = reactive<PlayerT>({
       progress: 0, // 当前播放歌曲的进度
       volume: 0.1, // 0 to 1 音量
       currentTrackDuration: 0, // 当前播放歌曲的总时长
       repeatMode: "off", // off | on | one 重复模式
-      shuffle: false, // true | false 随机播放
       muted: false, // true | false 是否静音
       reversed: false, // true | false 是否倒序播放
       enabled: false
@@ -68,23 +72,29 @@ export const usePlayerStore = defineStore(
       playerPlaying.value = playing;
     };
 
+    const updateLyricsIndex = (index: number) => {
+      currentTrackLyricsInfo.lyricLineIndex = index;
+    };
+
     return {
       playerPlaying,
       showLyrics,
       currentTrack,
       playerToolInfo,
       currentTrackList,
+      currentTrackLyricsInfo,
       setPlayerData,
       updateProgress,
       updatePlaying,
       changeShowLyrics,
       updateCurrentTrack,
-      updateCurrentTrackList
+      updateCurrentTrackList,
+      updateLyricsIndex
     };
   },
   {
     persist: {
-      paths: ["playerToolInfo", "currentTrackList", "currentTrack"]
+      paths: ["playerToolInfo", "currentTrackList", "currentTrack", "currentTrackLyricsInfo"]
     }
   }
 );

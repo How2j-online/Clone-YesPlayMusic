@@ -87,9 +87,6 @@ const moveToFMTrash = () => {
 const switchRepeatMode = () => {
   playerTool.changeRepeatMode();
 };
-const switchShuffle = () => {
-  console.log("switchShuffle");
-};
 const switchReversed = () => {
   playerTool.changeReversed();
 };

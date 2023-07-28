@@ -1,5 +1,5 @@
 import { defHttp } from "@/utils/http";
-import { songs } from "@/service/static/songs";
+import { songs, lyric } from "@/service/static/songs";
 
 enum PlayerApi {
   TrackUrl = "/song/url", // 获取音乐 url
@@ -55,8 +55,12 @@ export const getTrackDetail = (id: number, isStatic: boolean = true) => {
 /**
  * 获取歌词
  * @param id
+ * @param isStatic
  */
-export const getTrackLyric = (id: number) => {
+export const getTrackLyric = (id: number, isStatic: boolean = true) => {
+  if (isStatic) {
+    return Promise.resolve(lyric);
+  }
   return defHttp.get({
     url: PlayerApi.TrackLyric,
     params: {

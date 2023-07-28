@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from "vue";
+import type { ParsedLyricsType } from "@/utils/lyrics";
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import { useLocale } from "@/locales/useLocal";
 import SvgIcon from "@/components/SvgIcon.vue";
@@ -8,49 +9,194 @@ import { formatTrackTime } from "@/utils/format";
 import { getImgColor } from "@/utils";
 import * as Color from "color";
 import { usePlayerStore } from "@/store/player";
+import { useSettingStore } from "@/store/setting";
+import { storeToRefs } from "pinia";
+import PlayerTool from "@/utils/player-tool";
+import { getTrackLyric } from "@/service/player/track";
+import { lyricParser } from "@/utils/lyrics";
 
 const playerStore = usePlayerStore();
+const settingStore = useSettingStore();
+
+const { currentTrack, playerToolInfo, playerPlaying, showLyrics, currentTrackLyricsInfo } = storeToRefs(playerStore);
+const { lyricsSetting: settings } = storeToRefs(settingStore);
 const { t } = useLocale();
-const noLyric = ref<boolean>(false);
-const settings = reactive({
-  lyricsBackground: "blur",
-  showLyricsTime: false,
-  showLyricsTranslation: true
+const playerTool = new PlayerTool();
+const lyricAlys = ref<ParsedLyricsType[]>([]); // 歌词数据
+const tLyricAlys = ref<ParsedLyricsType[]>([]); // 翻译歌词数据
+const getLyric = () => {
+  if (!currentTrack.value.id) return;
+  getTrackLyric(currentTrack.value.id).then(res => {
+    let { lyric, tLyric } = lyricParser(res);
+    lyric.filter(l => !/^作([词曲])\s*([:：])\s*无$/.exec(l.content)); // 过滤掉作词作曲无的歌词
+    let includeAM = lyric.length <= 10 && lyric.map(l => l.content).includes("纯音乐，请欣赏"); // 纯音乐
+    if (includeAM) {
+      let reg = /^作([词曲])\s*([:：])\s*/;
+      let author = currentTrack.value?.ar[0]?.name;
+      lyric = lyric.filter(l => {
+        let regExpArr = l.content.match(reg);
+        return !regExpArr || l.content.replace(regExpArr[0], "") !== author;
+      });
+    }
+    if (lyric.length === 1 && includeAM) {
+      lyricAlys.value = [];
+      tLyricAlys.value = [];
+    } else {
+      lyricAlys.value = lyric;
+      tLyricAlys.value = tLyric;
+    }
+  });
+}; // 获取歌词
+getLyric();
+
+const noLyric = computed(() => {
+  return lyricAlys.value.length === 0;
 });
-const background = ref<string>("");
+
 const theme = ref<string>("dark");
 const date = ref<string>("00:00");
-const bgImageUrl = ref<string>("https://p1.music.126.net/dvRReDIRgybG1ZocRuQWtA==/109951168143604895.jpg?param=512y512");
-const imageUrl = ref("https://p1.music.126.net/dvRReDIRgybG1ZocRuQWtA==/109951168143604895.jpg?param=1024y1024");
-const volume = ref(0);
-const highlightLyricIndex = ref(0);
-const currentTrack = ref({
-  name: "name",
-  artists: [{ name: "artist" }],
-  album: { name: "album" }
+
+const bgImageUrl = computed(() => {
+  return currentTrack.value.al.picUrl;
 });
-const lyricWithTranslation = ref([
-  {
-    time: 0,
-    contents: ["content"],
-    translation: "translation"
+const imageUrl = computed(() => {
+  return currentTrack.value.al.picUrl;
+});
+const background = computed(async () => {
+  const color = await getImgColor(imageUrl.value);
+  const color2 = Color.rgb(color).lighten(0.28).rotate(-30).rgb().string();
+  return `linear-gradient(to top left, ${color}, ${color2})`;
+});
+// 声音
+const volume = computed(() => {
+  return playerToolInfo.value.volume;
+});
+watch(volume, value => {
+  playerTool.changeVolume(value);
+});
+
+const handleSliderDrag = (value: number) => {
+  playerTool.changeProgress(value);
+};
+
+// 循环按钮 title
+const repeatTitle = computed(() => {
+  switch (playerToolInfo.value.repeatMode) {
+    case "off":
+      return t("player.noRepeat");
+    case "on":
+      return t("player.repeat");
+    case "one":
+      return t("player.repeatTrack");
+    case "shuffle":
+      return t("player.shuffle");
   }
-]);
-
-const player = ref({
-  currentTrack: {
-    id: 0
-  },
-  isCurrentTrackLiked: false,
-  progress: 0,
-  currentTrackDuration: 100,
-  isPersonalFM: false,
-  repeatMode: "on",
-  playing: false,
-  shuffle: false
 });
 
-const artist = ref({ id: 0, name: "artist" });
+// 歌词滚动
+const highlightLyricIndex = ref<number>(toRaw(currentTrackLyricsInfo.value.lyricLineIndex));
+const lyricsInterval = ref<ReturnType<typeof setInterval>>();
+const setLyricsInterval = () => {
+  lyricsInterval.value = setInterval(() => {
+    const progress = playerToolInfo.value.progress;
+    let oldHighlightLyricIndex = highlightLyricIndex.value;
+    highlightLyricIndex.value = lyricAlys.value.findIndex((l, index) => {
+      const nextLyric = lyricAlys.value[index + 1];
+      return progress >= l.time && (nextLyric ? progress < nextLyric.time : true);
+    });
+    if (oldHighlightLyricIndex !== highlightLyricIndex.value) {
+      playerStore.updateLyricsIndex(highlightLyricIndex.value);
+      const lyricLineEl = document.getElementById(`line${highlightLyricIndex.value}`);
+      const mainEl = document.querySelector("main");
+      // setLyricsScroll(lyricLineEl as HTMLDivElement);
+      if (lyricLineEl && lyricLineEl.offsetTop > mainEl?.clientHeight / 2) {
+        lyricLineEl.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      } else {
+        const lyricLine1El = document.getElementById("line-1");
+        if (lyricLine1El) {
+          lyricLine1El.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      }
+    }
+  }, 50);
+};
+// TODO: 歌词颜色填充动态变化，时间间隔问题待优化
+const setLyricsScroll = (el: HTMLDivElement) => {
+  const spanEl = el.querySelectorAll("span");
+  let styleSheet = document.styleSheets[0]; // 假设样式表是第一个样式表
+  let animationStyle = "@keyframes scan { 0% { background-size:0 100%; } 100% { background-size:100% 100%; } }";
+  styleSheet.insertRule(animationStyle, styleSheet.cssRules.length);
+  const animationTime = lyricAlys.value[highlightLyricIndex.value + 1].time - lyricAlys.value[highlightLyricIndex.value].time;
+  spanEl.forEach(el => {
+    el.style.animation = `scan ${animationTime}s linear backwards`;
+  });
+};
+const showTranslationLyrics = ref<boolean>(false); // 是否显示翻译歌词
+const switchTranslationLyrics = () => {
+  showTranslationLyrics.value = !showTranslationLyrics.value;
+  setLyricsLine();
+};
+const setLyricsLine = () => {
+  const lyricsLineEl = document.querySelector(`#line${highlightLyricIndex.value}`);
+  nextTick(() => {
+    lyricsLineEl?.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
+};
+
+watch([showLyrics, playerPlaying], ([newShowLyrics, newPlaying]) => {
+  if (newShowLyrics) {
+    setLyricsLine();
+  }
+  if (newShowLyrics && newPlaying) {
+    setLyricsInterval();
+  } else {
+    if (lyricsInterval.value) {
+      clearInterval(lyricsInterval.value);
+    }
+  }
+});
+
+const lyricWithTranslation = computed(() => {
+  let ret: { time: number; content: string; contents: string[] }[] = [];
+  const lyricFiltered = lyricAlys.value.filter(({ content }) => Boolean(content));
+  if (lyricFiltered.length) {
+    lyricFiltered.forEach(({ rawTime, time, content }) => {
+      const lyricItem = { time, content, contents: [content] };
+      const sameTimeTLyric = tLyricAlys.value.find(({ rawTime: tLyricRawTime }) => {
+        return tLyricRawTime === rawTime;
+      });
+      if (sameTimeTLyric) {
+        const { content: tLyricContent } = sameTimeTLyric;
+        if (tLyricContent) {
+          lyricItem.contents.push(tLyricContent);
+        }
+      }
+      ret.push(lyricItem);
+    });
+  } else {
+    ret = lyricFiltered.map(({ time, content }) => {
+      return {
+        time,
+        content,
+        contents: [content]
+      };
+    });
+  }
+  return ret;
+});
+
+const artist = computed(() => {
+  return currentTrack.value?.ar ? currentTrack.value?.ar[0] : { id: 0, name: "unknown" };
+});
 const album = ref({ id: 0, name: "album" });
 const hasList = () => {
   return true;
@@ -70,43 +216,49 @@ const addToPlaylist = () => {
   console.log("addToPlaylist");
 };
 const switchRepeatMode = () => {
-  console.log("switchRepeatMode");
+  playerTool.changeRepeatMode();
 };
-const playNextTrack = () => {
-  console.log("playNext");
-};
+
 const switchShuffle = () => {
   console.log("switchShuffle");
 };
-const lyricFontSize = () => {
+const lyricFontSize = computed(() => {
   return {
-    fontSize: `${28}px`
+    fontSize: `${settings.value.lyricFontSize || 28}px`
   };
-};
+});
 
-const clickLyricLine = (index: number, startPlay: boolean = false) => {
-  console.log(index);
+const clickLyricLine = (value: number, startPlay: boolean = false) => {
+  let jumpFlag = false;
+  lyricAlys.value.filter(item => {
+    if (item.content === "纯音乐，请欣赏") {
+      jumpFlag = true;
+    }
+  });
+  if (!jumpFlag) {
+    playerTool.changeProgress(value);
+    highlightLyricIndex.value = lyricAlys.value.findIndex(ly => ly.time === value);
+    setLyricsLine();
+  }
 };
 
 const toggleLyrics = () => {
   playerStore.changeShowLyrics();
 };
-const playPrevTrack = () => {
-  console.log("playPrevTrack");
-};
 const moveToFMTrash = () => {
   console.log("moveToFMTrash");
 };
-const playOrPause = () => {
-  console.log("playOrPause");
+
+const playPrevTrack = () => {
+  playerTool.playPrevTrack();
+};
+const playNextTrack = () => {
+  playerTool.playNextTrack();
 };
 
-onMounted(() => {
-  getImgColor(imageUrl.value).then(color => {
-    const color2 = Color.rgb(color).lighten(0.28).rotate(-30).rgb().string();
-    background.value = `linear-gradient(to top left, ${color}, ${color2})`;
-  });
-});
+const playOrPause = () => {
+  playerTool.playOrPause();
+};
 </script>
 
 <template>
@@ -131,7 +283,8 @@ onMounted(() => {
           </div>
           <div class="cover">
             <div class="cover-container">
-              <img :lazy="imageUrl" v-img-lazy alt="image" src="" />
+              <!--suppress VueUnrecognizedDirective -->
+              <img :src="imageUrl" alt="image" />
               <div class="shadow" :style="{ backgroundImage: `url(${imageUrl})` }"></div>
             </div>
           </div>
@@ -170,11 +323,10 @@ onMounted(() => {
                   </button-icon>
                   <div class="volume-bar">
                     <HSlider
-                      v-model="volume"
+                      v-model="playerToolInfo.volume"
                       :min="0"
                       :max="1"
                       :interval="0.01"
-                      :drag-on-click="true"
                       :duration="0"
                       tooltip="none"
                       :dot-size="12"
@@ -185,8 +337,8 @@ onMounted(() => {
                   </div>
                 </div>
                 <div class="buttons">
-                  <button-icon :title="t('player.like')" @click.native="likeATrack(player.currentTrack.id)">
-                    <svg-icon class="svg-icon" :name="player.isCurrentTrackLiked ? 'heart-solid' : 'heart'" />
+                  <button-icon :title="t('player.like')" @click.native="likeATrack(currentTrack.id)">
+                    <svg-icon class="svg-icon" :name="playerToolInfo.isCurrentTrackLiked ? 'heart-solid' : 'heart'" />
                   </button-icon>
                   <button-icon :title="t('contextMenu.addToPlaylist')" @click.native="addToPlaylist">
                     <svg-icon class="svg-icon" name="plus" />
@@ -198,17 +350,18 @@ onMounted(() => {
               </div>
             </div>
             <div class="progress-bar">
-              <span>{{ "0:00" }}</span>
+              <span>{{ formatTrackTime(playerToolInfo.progress) }}</span>
               <div class="slider">
                 <HSlider
-                  v-model="player.progress"
+                  v-model="playerToolInfo.progress"
                   :min="0"
-                  :max="player.currentTrackDuration"
-                  :interval="1"
+                  :max="playerToolInfo.currentTrackDuration"
+                  :interval="0.5"
                   :drag-on-click="true"
                   :duration="0"
                   :dot-size="12"
-                  :height="2"
+                  :height="5"
+                  @on-drag-end="handleSliderDrag"
                   :tooltip-formatter="formatTrackTime"
                   :lazy="true"
                   :silent="true"
@@ -217,39 +370,44 @@ onMounted(() => {
                   :rail-style="{ backgroundColor: 'rgba(255, 255, 255, 0.18)' }"
                 ></HSlider>
               </div>
-              <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
+              <span>{{ formatTrackTime(playerToolInfo.currentTrackDuration) }}</span>
             </div>
             <div class="media-controls">
               <button-icon
-                v-show="!player.isPersonalFM"
-                :title="player.repeatMode === 'one' ? t('player.repeatTrack') : t('player.repeat')"
-                :class="{ active: player.repeatMode !== 'off' }"
+                v-show="!playerToolInfo.isPersonalFM"
+                :title="repeatTitle"
+                :class="{ active: playerToolInfo.repeatMode !== 'off' }"
                 @click.native="switchRepeatMode"
               >
-                <svg-icon class="svg-icon" v-show="player.repeatMode !== 'one'" name="repeat" />
-                <svg-icon class="svg-icon" v-show="player.repeatMode === 'one'" name="repeat-1" />
+                <svg-icon
+                  class="svg-icon"
+                  v-show="playerToolInfo.repeatMode === 'on' || playerToolInfo.repeatMode === 'off'"
+                  name="repeat"
+                />
+                <svg-icon class="svg-icon" v-show="playerToolInfo.repeatMode === 'one'" name="repeat-1" />
+                <svg-icon name="shuffle" v-show="playerToolInfo.repeatMode === 'shuffle'" class="svg-icon" />
               </button-icon>
               <div class="middle">
-                <button-icon v-show="!player.isPersonalFM" :title="t('player.previous')" @click.native="playPrevTrack">
+                <button-icon v-show="!playerToolInfo.isPersonalFM" :title="t('player.previous')" @click.native="playPrevTrack">
                   <svg-icon class="svg-icon" name="previous" />
                 </button-icon>
-                <button-icon v-show="player.isPersonalFM" title="不喜欢" @click.native="moveToFMTrash">
+                <button-icon v-show="playerToolInfo.isPersonalFM" title="不喜欢" @click.native="moveToFMTrash">
                   <svg-icon class="svg-icon" name="thumbs-down" />
                 </button-icon>
-                <button-icon id="play" :title="t(player.playing ? 'player.pause' : 'player.play')" @click.native="playOrPause">
-                  <svg-icon class="svg-icon" :name="player.playing ? 'pause' : 'play'" />
+                <button-icon id="play" :title="t(playerPlaying ? 'player.pause' : 'player.play')" @click.native="playOrPause">
+                  <svg-icon class="svg-icon" :name="playerPlaying ? 'pause' : 'play'" />
                 </button-icon>
                 <button-icon :title="t('player.next')" @click.native="playNextTrack">
                   <svg-icon class="svg-icon" name="next" />
                 </button-icon>
               </div>
               <button-icon
-                v-show="!player.isPersonalFM"
-                :title="t('player.shuffle')"
-                :class="{ active: player.shuffle }"
-                @click.native="switchShuffle"
+                v-if="settings.showLyricsTranslation"
+                :title="t('player.translationLyrics')"
+                :class="{ active: showTranslationLyrics }"
+                @click.native="switchTranslationLyrics"
               >
-                <svg-icon name="shuffle" class="svg-icon" />
+                <svg-icon class="svg-icon" name="translation" />
               </button-icon>
             </div>
           </div>
@@ -263,7 +421,7 @@ onMounted(() => {
               v-for="(line, index) in lyricWithTranslation"
               :id="`line${index}`"
               :key="index"
-              class="line"
+              class="line user-select-none"
               :class="{
                 highlight: highlightLyricIndex === index
               }"
@@ -273,7 +431,7 @@ onMounted(() => {
               <div class="content">
                 <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
                 <br />
-                <span v-if="line.contents[1] && settings.showLyricsTranslation" class="translation">{{ line.contents[1] }}</span>
+                <span v-if="line.contents[1] && showTranslationLyrics" class="translation">{{ line.contents[1] }}</span>
               </div>
             </div>
           </div>
@@ -362,12 +520,11 @@ onMounted(() => {
 .left-side {
   flex: 1;
   display: flex;
-  justify-content: flex-end;
-  margin-right: 32px;
+  justify-content: center;
+  margin-right: 22px;
   margin-top: 24px;
   align-items: center;
   transition: all 0.5s;
-
   z-index: 1;
 
   .date {
@@ -474,8 +631,8 @@ onMounted(() => {
 
       .svg-icon {
         opacity: 0.38;
-        height: 14px;
-        width: 14px;
+        height: 16px;
+        width: 16px;
       }
 
       .active .svg-icon {
@@ -541,17 +698,29 @@ onMounted(() => {
   color: var(--color-text);
   margin-right: 24px;
   z-index: 0;
+  height: 86vh;
+  margin-top: auto;
+  margin-bottom: auto;
 
   .lyrics-container {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding-left: 78px;
+    padding-left: 32px;
     max-width: 460px;
     overflow-y: auto;
     transition: 0.5s;
     scrollbar-width: none; // firefox
-
+    //noinspection CssInvalidPropertyValue
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      hsla(0, 0%, 100%, 0) 0,
+      hsla(0, 0%, 100%, 0.6) 15%,
+      #fff 25%,
+      #fff 75%,
+      hsla(0, 0%, 100%, 0.6) 85%,
+      hsla(0, 0%, 100%, 0)
+    );
     .line {
       margin: 2px 0;
       padding: 12px 18px;
@@ -568,14 +737,28 @@ onMounted(() => {
         transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
         span {
-          opacity: 0.28;
+          background-color: rgba(255, 255, 255, 0.4);
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-repeat: no-repeat;
+          background-position: 0 0;
+          background-size: 0 100%;
+          background-image: -webkit-linear-gradient(left, #fff, #fff);
+
           cursor: default;
           font-size: 1em;
-          transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          transition: background-color 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         span.translation {
-          opacity: 0.2;
+          background-color: rgba(255, 255, 255, 0.4);
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-repeat: no-repeat;
+          background-position: 0 0;
+          background-size: 0 100%;
+          background-image: -webkit-linear-gradient(left, #fff, #fff);
+
           font-size: 0.925em;
         }
       }
@@ -590,14 +773,28 @@ onMounted(() => {
     }
 
     .highlight div.content {
-      transform: scale(1);
+      transform: scale(1.1);
       span {
-        opacity: 0.98;
+        background-color: rgba(255, 255, 255, 0.4);
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-size: 100% 100%;
+        background-image: -webkit-linear-gradient(left, #fff, #fff);
+        //opacity: 0.98;
         display: inline-block;
       }
 
       span.translation {
-        opacity: 0.65;
+        background-color: rgba(255, 255, 255, 0.4);
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-size: 100% 100%;
+        background-image: -webkit-linear-gradient(left, #fff, #fff);
+        //opacity: 0.65;
       }
     }
   }
@@ -607,7 +804,7 @@ onMounted(() => {
   }
 
   .lyrics-container .line:first-child {
-    margin-top: 50vh;
+    padding-top: 12vh;
   }
 
   .lyrics-container .line:last-child {

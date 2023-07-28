@@ -40,7 +40,7 @@ export const resizeImage = (imgUrl: string, size = 512) => {
 };
 
 export const formatTrackTime = (value: number) => {
-  if (!value) return "";
+  if (!value) return "0:00";
   let min = ~~(value / 60);
   let sec = (~~(value % 60)).toString().padStart(2, "0");
   return `${min}:${sec}`;
