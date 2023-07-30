@@ -1,10 +1,37 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { PlayerItem } from "@/service/home/type";
 import SvgIcon from "@/components/SvgIcon.vue";
 import Cover from "@/components/Cover.vue";
 import { formatPlayCount } from "@/utils/format";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
+
+interface CoverItemsType {
+  id: number;
+  name: string;
+  img1v1Url?: string;
+  picUrl?: string;
+  coverImgUrl?: string;
+  mark?: number;
+  privacy?: number;
+  copywriter?: string;
+  description?: string;
+  updateFrequency?: string;
+  playCount?: number;
+  creator?: {
+    nickname: string;
+  };
+  publishTime?: number;
+  artist?: {
+    id: number;
+    name: string;
+  };
+  artists?: {
+    id: number;
+    name: string;
+  }[];
+  type?: string;
+  size?: number;
+}
 
 defineOptions({
   name: "CoverRow"
@@ -12,7 +39,7 @@ defineOptions({
 const props = withDefaults(
   defineProps<{
     type: string;
-    items: PlayerItem[];
+    items: CoverItemsType[];
     columnNumber?: number; // 一行几个
     gap?: string; // grid-gap 网格上下间距
     playButtonSize?: number; // 播放按钮大小
@@ -36,7 +63,7 @@ const rowStyle = computed(() => {
   };
 });
 // 是否显示播放量
-const getImageUrl = (item: PlayerItem) => {
+const getImageUrl = (item: CoverItemsType) => {
   if (item.img1v1Url) {
     const img1v1ID = item.img1v1Url.split("/");
     let imgID = img1v1ID[img1v1ID.length - 1];
@@ -49,19 +76,19 @@ const getImageUrl = (item: PlayerItem) => {
   return `${img?.replace(/http:\/\//, "https://")}?param=512y512`;
 };
 // 是否是隐私
-const isPrivacy = (item: PlayerItem) => {
+const isPrivacy = (item: CoverItemsType) => {
   return props.type === "playlist" && item.privacy === 10;
 };
 // 是否是独家
-const isExplicit = (item: PlayerItem) => {
+const isExplicit = (item: CoverItemsType) => {
   return props.type === "album" && item.mark === 1056768;
 };
 // 获取标题
-const getTitleLink = (item: PlayerItem) => {
+const getTitleLink = (item: CoverItemsType) => {
   return `/${props.type}/${item.id}`;
 };
 // 获取子标题
-const getSubText = (item: PlayerItem) => {
+const getSubText = (item: CoverItemsType) => {
   if (props.subText === "copywriter") return item.copywriter;
   if (props.subText === "description") return item.description;
   if (props.subText === "updateFrequency") return item.updateFrequency;

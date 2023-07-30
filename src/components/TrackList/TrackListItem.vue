@@ -137,9 +137,9 @@ const album = computed(() => {
   return track.value.album || track.value.al || track.value?.simpleSong?.al;
 });
 // 是否显示时间
-const showTrackTime = computed(() => props.type !== "track-list");
+const showTrackTime = computed(() => props.type !== "trackList");
 // 是否显示专辑名
-const showAlbumName = computed(() => props.type !== "album" && props.type !== "track-list");
+const showAlbumName = computed(() => props.type !== "album" && props.type !== "trackList");
 
 //TODO: 专辑信息
 const albumObject = reactive({

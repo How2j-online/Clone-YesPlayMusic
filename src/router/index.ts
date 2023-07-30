@@ -35,6 +35,19 @@ const routes: Array<RouteRecordRaw> = [
     path: "/new-album", // 最新专辑页面
     name: "new-album",
     component: () => import("@/views/NewAlbum.vue")
+  },
+  {
+    path: "/mv/:id", // MV页面
+    name: "mv",
+    component: () => import("@/views/Mv.vue")
+  },
+  {
+    path: "/artist/:id/mv",
+    name: "artistMV",
+    component: () => import("@/views/ArtistMV.vue"),
+    meta: {
+      keepAlive: true
+    }
   }
 ];
 
