@@ -36,9 +36,9 @@ export const getTrackUrl = (id: number, isStatic: boolean = true) => {
  * @param id
  * @param isStatic
  */
-export const getTrackDetail = (id: number, isStatic: boolean = true) => {
+export const getTrackDetail = (id: number | string, isStatic: boolean = true) => {
   if (isStatic) {
-    const song = songs.find(item => item.id === id);
+    const song = songs.find(item => item.id === +id);
     return Promise.resolve({
       code: 200,
       songs: [song]

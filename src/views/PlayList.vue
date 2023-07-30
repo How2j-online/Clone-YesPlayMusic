@@ -13,21 +13,26 @@ import { getPlaylistDetail } from "@/service/playlist";
 import { useRoute } from "vue-router";
 import { PlayListType, TacksT } from "@/service/playlist/type";
 import PlayerTool from "@/utils/player-tool";
+import { getTrackDetail } from "@/service/player/track";
 const route = useRoute();
 const { t } = useLocale();
-
 defineOptions({
   name: "PlayList"
 });
 const playerTool = new PlayerTool();
 const id = route.params.id as string;
+const playlistMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null);
+const displaySearchInPlaylist = ref<boolean>(false);
+const isLikeSongsPage = computed(() => {
+  return route.name === "likedSongs";
+});
+
 const show = ref(true);
 const showFullDescription = ref(false);
 const isUserOwnPlaylist = false;
 const loadingMore = ref(false);
 const lastLoadedTrackIndex = ref(9);
-const displaySearchInPlaylist = ref(false);
-const isLikeSongsPage = ref(false);
+
 const searchInputWidth = ref("0px");
 const inputFocus = ref(false);
 const inputSearchKeyWords = ref("");
@@ -39,7 +44,7 @@ const data = {
   }
 };
 const hasMore = ref(false);
-const debounceTimeout = ref(null);
+const debounceTimeout = ref<ReturnType<typeof setTimeout>>();
 const specialPlaylist = {
   2829816518: {
     name: "欧美私人订制",
@@ -174,10 +179,11 @@ onBeforeMount(() => {
     tracks.value = res.playlist.tracks;
   });
 });
-
-const openMenu = () => {
-  console.log("openMenu");
+// 打开菜单
+const openMenu = (e: PointerEvent) => {
+  playlistMenuRef.value?.openMenu(e);
 };
+
 const openPlaylist = () => {
   console.log("openPlaylist");
 };
@@ -201,11 +207,40 @@ const playPlaylistByID = () => {
   playerTool.playTracksList(+id, "playlist");
 };
 const likePlaylist = (toast: boolean = true) => {};
-const searchInPlaylist = () => {};
+// 歌单内搜索
+const searchInPlaylist = () => {
+  displaySearchInPlaylist.value = !displaySearchInPlaylist.value || isLikeSongsPage.value;
+  if (displaySearchInPlaylist.value == false) {
+    searchKeyWords.value = "";
+    inputSearchKeyWords.value = "";
+  } else {
+    searchInputWidth.value = "172px";
+    loadMore(500);
+  }
+};
 const editPlaylist = () => {};
 const deletePlaylist = () => {};
-const loadMore = (loadNum: number = 10) => {};
-const inputDebounce = () => {};
+const loadMore = (loadNum: number = 10) => {
+  let trackIDs = playlist.value.trackIds
+    .filter((t, index) => {
+      if (index > lastLoadedTrackIndex.value && index <= lastLoadedTrackIndex.value + loadNum) {
+        return true;
+      }
+    })
+    .map(t => t.id);
+  // getTrackDetail(trackIDs.join(",")).then(res => {
+  //   tracks.value = tracks.value.concat(res.songs);
+  //   lastLoadedTrackIndex.value += trackIDs.length;
+  //   loadingMore.value = false;
+  //   hasMore.value = lastLoadedTrackIndex.value + 1 !== playlist.value.trackIds.length;
+  // });
+};
+const inputDebounce = () => {
+  if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
+  debounceTimeout.value = setTimeout(() => {
+    searchKeyWords.value = inputSearchKeyWords.value;
+  }, 600);
+};
 </script>
 
 <template>
@@ -323,7 +358,7 @@ const inputDebounce = () => {};
               v-if="displaySearchInPlaylist"
               v-model.trim="inputSearchKeyWords"
               :placeholder="inputFocus ? '' : t('playlist.search')"
-              @input="inputDebounce()"
+              @input="inputDebounce"
               @focus="inputFocus = true"
               @blur="inputFocus = false"
             />
@@ -354,7 +389,7 @@ const inputDebounce = () => {};
       >{{ playlist.description }}</Modal
     >
 
-    <ContextMenu ref="playlistMenu">
+    <ContextMenu ref="playlistMenuRef">
       <!-- <div class="item">{{ t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likePlaylist(true)">
         {{ playlist?.subscribed ? t("contextMenu.removeFromLibrary") : t("contextMenu.saveToLibrary") }}
@@ -507,6 +542,32 @@ const inputDebounce = () => {};
 [data-theme="dark"] {
   .gradient-radar {
     background-image: linear-gradient(to left, #92fe9d 0%, #00c9ff 100%);
+  }
+}
+
+.menu .item {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: default;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-bg-for-transparent);
+    transition: opacity 125ms ease-out, transform 125ms ease-out;
+  }
+  &:active {
+    opacity: 0.75;
+    transform: scale(0.95);
+  }
+
+  .svg-icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 5px;
   }
 }
 

@@ -1,11 +1,10 @@
-import locale from "@/locales/setupI18n";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-export const formatPlayCount = (count: number) => {
+export const formatPlayCount = (count: number, localeLang: string = "zh_CH") => {
   if (!count) return "";
-  if (locale.global.locale === "zh-CN") {
+  if (localeLang === "zh_CN") {
     if (count > 100000000) {
       return `${Math.floor((count / 100000000) * 100) / 100}亿`; // 2.32 亿
     }
@@ -53,7 +52,7 @@ export const formatDate = (timestamp: number, format = "MMM D, YYYY") => {
   return dayjs(timestamp).format(format);
 };
 
-export const formatTime = (Milliseconds: number, format = "HH:MM:SS") => {
+export const formatTime = (Milliseconds: number, format = "HH:MM:SS", localLang: string = "zh_CN") => {
   if (!Milliseconds) return "";
   dayjs.extend(duration);
   dayjs.extend(relativeTime);
@@ -67,8 +66,8 @@ export const formatTime = (Milliseconds: number, format = "HH:MM:SS") => {
     return hours !== "0" ? `${hours}:${minus.padStart(2, "0")}:${seconds}` : `${minus}:${seconds}`;
   } else if (format === "Human") {
     let hoursUnit, minutesUnit;
-    switch (locale.global.locale) {
-      case "zh-CN":
+    switch (localLang) {
+      case "zh_CN":
         hoursUnit = "小时";
         minutesUnit = "分钟";
         break;
@@ -78,5 +77,18 @@ export const formatTime = (Milliseconds: number, format = "HH:MM:SS") => {
         break;
     }
     return hours !== "0" ? `${hours} ${hoursUnit} ${minus} ${minutesUnit}` : `${minus} ${minutesUnit}`;
+  }
+};
+
+export const formatAlbumType = (type: string, albumSize: number) => {
+  if (!type) return "";
+  if (type === "EP/Single") {
+    return albumSize === 1 ? "Single" : "EP";
+  } else if (type === "Single") {
+    return "Single";
+  } else if (type === "专辑") {
+    return "Album";
+  } else {
+    return type;
   }
 };

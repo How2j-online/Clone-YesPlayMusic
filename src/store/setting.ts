@@ -9,6 +9,7 @@ export const useSettingStore = defineStore("setting", () => {
   // state ref reactive
   const theme = ref<boolean>(false);
   const enableReversedMode = ref<boolean>(true);
+  const lang = ref<string>("zh_CN");
 
   const lyricsSetting = reactive({
     lyricsBackground: "dynamic",
@@ -29,6 +30,7 @@ export const useSettingStore = defineStore("setting", () => {
     theme,
     enableReversedMode,
     lyricsSetting,
+    lang,
     changeTheme
   };
 });

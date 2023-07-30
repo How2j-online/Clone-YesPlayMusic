@@ -65,7 +65,7 @@
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
-import { computed, inject, reactive, ref } from "vue";
+import { computed, inject, reactive, ref, watch } from "vue";
 import { RCTProvideKey } from "@/global/key";
 import { TracksItemType } from "@/service/playlist/type";
 import { formatTime } from "@/utils/format";
@@ -85,13 +85,16 @@ const props = withDefaults(
 
 const trackStyle = ref("");
 const playerStore = usePlayerStore();
-const playable = ref(false);
 const showUnavailableSongInGreyStyle = ref(false);
 
 // 歌曲信息
 const track = computed<TracksItemType>(() => {
   // return props.type === "cloudDisk" ? props.tackProp.simpleSong : props.tackProp;
   return props.tackProp;
+});
+
+const playable = computed(() => {
+  return track.value.privilege?.pl > 0 || track.value?.playable;
 });
 
 // 歌曲图片
@@ -106,7 +109,6 @@ const imgUrl = computed(() => {
 const parentRightClickedTrack = inject(RCTProvideKey);
 const hover = ref(false);
 const isPlaying = computed(() => {
-  if (!playerStore.currentTrack) return false;
   return playerStore.currentTrack.id === track.value.id;
 });
 const trackClass = computed(() => {

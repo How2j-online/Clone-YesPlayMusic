@@ -1,6 +1,7 @@
 import type { App } from "vue";
 import { createI18n } from "vue-i18n";
 import type { I18n, I18nOptions } from "vue-i18n";
+import { useSettingStore } from "@/store/setting";
 
 export const SUPPORT_LOCALES = ["en", "zh_CN"];
 export let i18n: I18n;

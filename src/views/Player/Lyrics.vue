@@ -227,7 +227,7 @@ const lyricFontSize = computed(() => {
     fontSize: `${settings.value.lyricFontSize || 28}px`
   };
 });
-
+// 歌词点击
 const clickLyricLine = (value: number, startPlay: boolean = false) => {
   let jumpFlag = false;
   lyricAlys.value.filter(item => {
@@ -236,7 +236,7 @@ const clickLyricLine = (value: number, startPlay: boolean = false) => {
     }
   });
   if (!jumpFlag) {
-    playerTool.changeProgress(value);
+    playerTool.changeProgress(value + 0.3);
     highlightLyricIndex.value = lyricAlys.value.findIndex(ly => ly.time === value);
     setLyricsLine();
   }

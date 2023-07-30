@@ -9,9 +9,10 @@ import { setupGlobDirectives } from "@/directive";
 const app = createApp(App);
 
 const setupApp = async () => {
+  app.use(store);
   await setupI18n(app);
   setupGlobDirectives(app);
-  app.use(store).use(router).mount("#app");
+  app.use(router).mount("#app");
 };
 
 setupApp().then(() => {});

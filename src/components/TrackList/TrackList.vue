@@ -55,7 +55,7 @@ import ContextMenu from "@/components/ContextMenu.vue";
 import { useLocale } from "@/locales/useLocal";
 import { resizeImage } from "@/utils/format";
 import { computed, CSSProperties, onBeforeMount, provide, ref } from "vue";
-import { TracksItemType } from "@/service/playlist/type";
+import { AlbumPType, Artist2, TracksItemType } from "@/service/playlist/type";
 import { RCTProvideKey } from "@/global/key";
 import { usePlayerStore } from "@/store/player";
 import PlayerTool from "@/utils/player-tool";
@@ -67,10 +67,10 @@ defineOptions({
 const props = withDefaults(
   defineProps<{
     tracks: TracksItemType[];
-    type: string;
+    type: "playlist" | "album" | "trackList" | "cloudDisk";
     id: number;
     dbClickTrackFunc?: string;
-    albumObject?: () => {};
+    albumObject?: Partial<Artist2>;
     extraContextMenuItem?: Array<string>;
     columnNumber?: number;
     highlightPlayingTrack?: boolean;
@@ -83,9 +83,7 @@ const props = withDefaults(
     dbClickTrackFunc: "default",
     albumObject: () => {
       return {
-        artist: {
-          name: ""
-        }
+        name: ""
       };
     },
     extraContextMenuItem: () => {
