@@ -36,13 +36,18 @@ export interface TrackIdsItemType {
 
 export interface TracksItemType {
   id: number;
-  songId: number;
+  songId?: number;
   name: string;
   ar: { id: number; name: string; picUrl: string }[];
   al: { id: number; name: string; picUrl: string };
   // 专辑
-  album?: object;
-  simpleSong?: { al: { picUrl: string }; ar: { name: string }[] };
+  album?: { id: number; name: string; picUrl: string };
+  simpleSong?: {
+    id: number;
+    name: string;
+    ar: { id: number; name: string; picUrl: string }[];
+    al: { id: number; name: string; picUrl: string };
+  };
   reason?: string;
   mark?: number;
   dt?: number;

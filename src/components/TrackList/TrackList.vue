@@ -42,7 +42,7 @@
         :tack-prop="trackItem"
         :track-no="index + 1"
         :highlight-playing-track="highlightPlayingTrack"
-        @dblclick.native="playThisList(trackItem.id || trackItem.songId)"
+        @dblclick.native="playThisList(trackItem?.id || trackItem?.songId)"
         @click.right.native="openMenu($event, trackItem, index)"
       />
     </div>
@@ -55,7 +55,6 @@ import ContextMenu from "@/components/ContextMenu.vue";
 import { useLocale } from "@/locales/useLocal";
 import { resizeImage } from "@/utils/format";
 import { computed, CSSProperties, onBeforeMount, provide, ref } from "vue";
-import { AlbumPType, Artist2, TracksItemType } from "@/service/playlist/type";
 import { RCTProvideKey } from "@/global/key";
 import { usePlayerStore } from "@/store/player";
 import PlayerTool from "@/utils/player-tool";
@@ -64,13 +63,51 @@ defineOptions({
   name: "TrackList"
 });
 
+interface PropsTrackListItemType {
+  id: number;
+  songId?: number;
+  name: string;
+  ar: { id: number; name: string; picUrl: string }[];
+  al: { id: number; name: string; picUrl: string };
+  album?: { id: number; name: string; picUrl: string };
+  simpleSong?: {
+    id: number;
+    name: string;
+    ar: { id: number; name: string; picUrl: string }[];
+    al: { id: number; name: string; picUrl: string };
+  };
+  privilege?: { pl: number };
+  playable?: boolean;
+  dt?: number;
+  playCount?: number;
+  mark?: number;
+  reason?: string;
+}
+interface PropsAlbumOType {
+  img1v1Id: number;
+  topicPerson: number;
+  followed: boolean;
+  trans: string;
+  musicSize: number;
+  albumSize: number;
+  briefDesc: string;
+  alias: any[];
+  picId: number;
+  picUrl: string;
+  img1v1Url: string;
+  name: string;
+  id: number;
+  img1v1Id_str: string;
+}
+type RightClickedTrackType = Pick<PropsTrackListItemType, "id" | "name" | "ar" | "al">;
+
 const props = withDefaults(
   defineProps<{
-    tracks: TracksItemType[];
+    tracks: PropsTrackListItemType[];
     type: "playlist" | "album" | "trackList" | "cloudDisk";
     id: number;
     dbClickTrackFunc?: string;
-    albumObject?: Partial<Artist2>;
+    albumObject?: Partial<PropsAlbumOType>;
     extraContextMenuItem?: Array<string>;
     columnNumber?: number;
     highlightPlayingTrack?: boolean;
@@ -101,17 +138,29 @@ const menuRef = ref<InstanceType<typeof ContextMenu> | null>(null);
 const playerStore = usePlayerStore();
 const listStyles = ref<CSSProperties>({}); // 列表样式
 // 右键的表单信息
-const rightClickedTrack = ref<Partial<TrackListItem>>({
+const rightClickedTrack = ref<RightClickedTrackType>({
   id: 0,
   name: "",
-  ar: [{ name: "" }],
+  ar: [{ name: "", id: 0, picUrl: "" }],
   al: {
+    id: 0,
+    name: "",
     picUrl: ""
   }
 });
 const rightClickedTrackIndex = ref<number>(0);
-const rightClickedTrackComputed = computed<Partial<TracksItemType>>(() => {
-  if (props.type === "cloudDisk") return { id: 0, name: "", ar: [{ name: "" }], al: { picUrl: "" } };
+const rightClickedTrackComputed = computed<RightClickedTrackType>(() => {
+  if (props.type === "cloudDisk")
+    return {
+      id: 0,
+      name: "",
+      ar: [{ name: "", id: 0, picUrl: "" }],
+      al: {
+        id: 0,
+        name: "",
+        picUrl: ""
+      }
+    };
   return rightClickedTrack.value;
 });
 // 右键打开菜单

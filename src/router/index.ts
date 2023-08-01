@@ -48,6 +48,16 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       keepAlive: true
     }
+  },
+  {
+    path: "/settings", // 设置页面
+    name: "settings",
+    component: () => import("@/views/Settings.vue")
+  },
+  {
+    name: "search",
+    path: "/search/:keywords?",
+    component: () => import("@/views/Search.vue")
   }
 ];
 

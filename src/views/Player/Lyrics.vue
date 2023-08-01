@@ -277,6 +277,7 @@ const playOrPause = () => {
       <div v-if="settings.lyricsBackground === true" class="gradient-background" :style="{ background }"></div>
 
       <div class="left-side">
+        {{ settings.lyricsBackground }}
         <div>
           <div v-if="settings.showLyricsTime" class="date">
             {{ date }}

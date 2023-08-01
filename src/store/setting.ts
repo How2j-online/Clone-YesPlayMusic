@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 
 interface LyricsSetting {
-  lyricsBackground: "blur" | "dynamic";
+  lyricsBackground: "blur" | "dynamic" | true | false;
+  showLyricsTime: boolean;
+  showLyricsTranslation: boolean;
+  lyricFontSize: number;
 }
 
 export const useSettingStore = defineStore("setting", () => {
@@ -10,20 +13,37 @@ export const useSettingStore = defineStore("setting", () => {
   const theme = ref<boolean>(false);
   const enableReversedMode = ref<boolean>(true);
   const lang = ref<string>("zh_CN");
+  const appearance = ref<string>("auto");
 
-  const lyricsSetting = reactive({
-    lyricsBackground: "dynamic",
+  watch(appearance, value => {
+    theme.value = value === "auto" || value === "light";
+  });
+
+  const lyricsSetting = reactive<LyricsSetting>({
+    lyricsBackground: "blur",
     showLyricsTime: false,
     showLyricsTranslation: true,
     lyricFontSize: 22
   });
 
-  // getters computed
-
   // actions methods functions
 
-  const changeTheme = () => {
-    theme.value = !theme.value;
+  const changeTheme = (value: boolean) => {
+    theme.value = value;
+  };
+  const changeAppearance = (value: string) => {
+    appearance.value = value;
+    if (value === "auto" || value === undefined) {
+      value = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    document.body.setAttribute("data-theme", value);
+    // document.querySelector('meta[name="theme-color"]').setAttribute("content", value === "dark" ? "#222" : "#fff");
+  };
+  const changeLang = async (value: string) => {
+    lang.value = value;
+  };
+  const setLyricsSetting = (value: object) => {
+    Object.assign(lyricsSetting, value);
   };
 
   return {
@@ -31,6 +51,10 @@ export const useSettingStore = defineStore("setting", () => {
     enableReversedMode,
     lyricsSetting,
     lang,
-    changeTheme
+    appearance,
+    changeTheme,
+    setLyricsSetting,
+    changeAppearance,
+    changeLang
   };
 });

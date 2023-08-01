@@ -5,7 +5,7 @@ import Cover from "@/components/Cover.vue";
 import { formatPlayCount } from "@/utils/format";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 
-interface CoverItemsType {
+interface PropsCoverItemsType {
   id: number;
   name: string;
   img1v1Url?: string;
@@ -39,7 +39,7 @@ defineOptions({
 const props = withDefaults(
   defineProps<{
     type: string;
-    items: CoverItemsType[];
+    items: PropsCoverItemsType[];
     columnNumber?: number; // 一行几个
     gap?: string; // grid-gap 网格上下间距
     playButtonSize?: number; // 播放按钮大小
@@ -63,7 +63,7 @@ const rowStyle = computed(() => {
   };
 });
 // 是否显示播放量
-const getImageUrl = (item: CoverItemsType) => {
+const getImageUrl = (item: PropsCoverItemsType) => {
   if (item.img1v1Url) {
     const img1v1ID = item.img1v1Url.split("/");
     let imgID = img1v1ID[img1v1ID.length - 1];
@@ -76,19 +76,19 @@ const getImageUrl = (item: CoverItemsType) => {
   return `${img?.replace(/http:\/\//, "https://")}?param=512y512`;
 };
 // 是否是隐私
-const isPrivacy = (item: CoverItemsType) => {
+const isPrivacy = (item: PropsCoverItemsType) => {
   return props.type === "playlist" && item.privacy === 10;
 };
 // 是否是独家
-const isExplicit = (item: CoverItemsType) => {
+const isExplicit = (item: PropsCoverItemsType) => {
   return props.type === "album" && item.mark === 1056768;
 };
 // 获取标题
-const getTitleLink = (item: CoverItemsType) => {
+const getTitleLink = (item: PropsCoverItemsType) => {
   return `/${props.type}/${item.id}`;
 };
 // 获取子标题
-const getSubText = (item: CoverItemsType) => {
+const getSubText = (item: PropsCoverItemsType) => {
   if (props.subText === "copywriter") return item.copywriter;
   if (props.subText === "description") return item.description;
   if (props.subText === "updateFrequency") return item.updateFrequency;

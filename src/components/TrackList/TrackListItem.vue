@@ -67,13 +67,32 @@ import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { computed, inject, reactive, ref, watch } from "vue";
 import { RCTProvideKey } from "@/global/key";
-import { TracksItemType } from "@/service/playlist/type";
 import { formatTime } from "@/utils/format";
 import { usePlayerStore } from "@/store/player";
 
+interface TrackPropType {
+  id: number;
+  name: string;
+  ar?: { id: number; name: string }[];
+  al?: { id: number; name: string; picUrl: string };
+  album?: { id: number; name: string; picUrl: string };
+  simpleSong?: {
+    id: number;
+    name: string;
+    ar: { id: number; name: string }[];
+    al: { id: number; name: string; picUrl: string };
+  };
+  privilege?: { pl: number };
+  playable?: boolean;
+  dt?: number;
+  playCount?: number;
+  mark?: number;
+  reason?: string;
+}
+
 const props = withDefaults(
   defineProps<{
-    tackProp: TracksItemType;
+    tackProp: TrackPropType;
     trackNo: number;
     highlightPlayingTrack: boolean;
     type: string;
@@ -88,7 +107,7 @@ const playerStore = usePlayerStore();
 const showUnavailableSongInGreyStyle = ref(false);
 
 // 歌曲信息
-const track = computed<TracksItemType>(() => {
+const track = computed<TrackPropType>(() => {
   // return props.type === "cloudDisk" ? props.tackProp.simpleSong : props.tackProp;
   return props.tackProp;
 });
